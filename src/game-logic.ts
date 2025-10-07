@@ -11,7 +11,7 @@ class PoliticalMadnessGame {
     this.gameState = {
       playerName: '',
       difficulty: 'moyen',
-      theme: 'politique',
+      theme: 'geopolitique',
       aiOpponent: 'centriste',
       playerPosition: 'pour',
       currentDuel: 1,
@@ -26,10 +26,10 @@ class PoliticalMadnessGame {
     };
     
     this.themes = {
-      politique: [
-        "La démocratie directe devrait remplacer la démocratie représentative",
-        "Le vote obligatoire devrait être instauré",
-        "Les partis politiques devraient être financés uniquement par l'État"
+      geopolitique: [
+        "L'OTAN devrait se dissoudre pour laisser place à une défense européenne autonome",
+        "Les sanctions économiques contre la Russie devraient être levées immédiatement",
+        "L'Union Européenne devrait accueillir la Turquie comme membre à part entière"
       ],
       societe: [
         "La PMA devrait être interdite",
@@ -41,20 +41,15 @@ class PoliticalMadnessGame {
         "Les entreprises privées devraient être nationalisées",
         "L'impôt sur le revenu devrait être supprimé"
       ],
-      environnement: [
+      ecologie: [
         "La voiture individuelle devrait être interdite en ville",
         "La viande devrait être taxée comme un produit de luxe",
         "Les vols en avion devraient être limités à 2 par personne et par an"
       ],
-      sante: [
-        "L'euthanasie devrait être légalisée",
-        "Les soins de santé devraient être entièrement privatisés",
-        "La vaccination devrait être obligatoire pour tous"
-      ],
-      education: [
-        "L'école à la maison devrait être interdite",
-        "L'université devrait être gratuite pour tous",
-        "Les notes devraient être supprimées jusqu'à 16 ans"
+      culture: [
+        "Les réseaux sociaux devraient être interdits aux mineurs",
+        "L'intelligence artificielle devrait remplacer les artistes humains",
+        "Les langues régionales devraient être obligatoires à l'école"
       ]
     };
   }
@@ -72,19 +67,16 @@ class PoliticalMadnessGame {
 
   async generateNewIdea(): Promise<void> {
     try {
-      if (this.gameState.theme === 'random') {
-        const themeKeys = Object.keys(this.themes) as Theme[];
-        const randomTheme = themeKeys[Math.floor(Math.random() * themeKeys.length)];
-        this.gameState.currentIdea = this.themes[randomTheme][Math.floor(Math.random() * this.themes[randomTheme].length)];
-      } else {
-        const themeIdeas = this.themes[this.gameState.theme];
+      // Use predifined ideas as fallback, but prefer LangChain if available
+      const themeIdeas = this.themes[this.gameState.theme];
+      if (themeIdeas && themeIdeas.length > 0) {
         this.gameState.currentIdea = themeIdeas[Math.floor(Math.random() * themeIdeas.length)];
       }
-      
+
       if (langChainConfig.isInitialized) {
         try {
           const generatedIdea = await langChainConfig.generateDebateIdea(
-            this.gameState.theme, 
+            this.gameState.theme,
             this.gameState.difficulty
           );
           this.gameState.currentIdea = generatedIdea;
@@ -379,7 +371,7 @@ class PoliticalMadnessGame {
     this.gameState = {
       playerName: '',
       difficulty: 'moyen',
-      theme: 'politique',
+      theme: 'geopolitique',
       aiOpponent: 'centriste',
       playerPosition: 'pour',
       currentDuel: 1,

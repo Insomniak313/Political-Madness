@@ -57,8 +57,8 @@ export interface ThemeIdeas {
   [key: string]: string[];
 }
 
-export type Difficulty = 'facile' | 'moyen' | 'difficile';
-export type Theme = 'politique' | 'societe' | 'economie' | 'environnement' | 'sante' | 'education' | 'random';
+export type Difficulty = 'facile' | 'moyen' | 'difficile' | 'tres-difficile';
+export type Theme = 'geopolitique' | 'societe' | 'economie' | 'ecologie' | 'culture' | null;
 export type Position = 'pour' | 'contre';
 export type OpponentType = 'conservateur' | 'liberal' | 'centriste' | 'radical';
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';

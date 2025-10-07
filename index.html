@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Political Madness</title>
+    <title>Débat National</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/src/styles.css">
 </head>
+
 <body class="bg-gray-100 min-h-screen">
-    <!-- Splash Screen -->
-    <div id="splashScreen" class="fixed inset-0 gradient-bg flex items-center justify-center p-4 z-50 modal-overlay">
+    <!-- Game Config Screen (shown when "Nouvelle partie" is clicked) -->
+    <div id="splashScreen" class="hidden fixed inset-0 gradient-bg flex items-center justify-center p-4 z-50 modal-overlay">
         <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full card-shadow fade-in modal-content">
             <div class="text-center mb-8">
                 <h1 class="text-4xl font-bold text-gray-800 mb-2">🗳️ Political Madness</h1>
                 <p class="text-gray-600">Débattez avec l'IA sur des sujets clivants</p>
             </div>
-            
+
             <form id="gameConfig" class="space-y-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Votre nom</label>
                     <input type="text" id="playerName" class="w-full input-field px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Entrez votre nom" required>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Difficulté</label>
                     <select id="difficulty" class="w-full input-field px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -31,7 +33,7 @@
                         <option value="difficile">Difficile</option>
                     </select>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Thème</label>
                     <select id="theme" class="w-full input-field px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -44,7 +46,7 @@
                         <option value="random">Aléatoire</option>
                     </select>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Adversaire IA</label>
                     <select id="aiOpponent" class="w-full input-field px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -54,7 +56,7 @@
                         <option value="radical">Luna - Radicale</option>
                     </select>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Position</label>
                     <div class="flex space-x-4">
@@ -68,12 +70,27 @@
                         </label>
                     </div>
                 </div>
-                
+
                 <button type="submit" class="w-full btn-primary text-white py-3 px-6 rounded-lg font-semibold transform hover:scale-105">
                     Commencer le jeu
                 </button>
             </form>
         </div>
+    </div>
+
+    <!-- Home Menu Screen (main screen) -->
+    <div id="homeScreen" class="fixed inset-0 gradient-bg flex items-center justify-center p-4 z-50">
+        <!-- HomeMenu component will be injected here -->
+    </div>
+
+    <!-- Options Screen -->
+    <div id="optionsScreen" class="hidden fixed inset-0 gradient-bg flex items-center justify-center p-4 z-50">
+        <!-- OptionsScreen component will be injected here -->
+    </div>
+
+    <!-- New Game Wizard Screen -->
+    <div id="newGameScreen" class="hidden">
+        <!-- NewGameWizard component will be injected here -->
     </div>
 
     <!-- Game Screen -->
@@ -180,4 +197,5 @@
 
     <script type="module" src="/src/main.ts"></script>
 </body>
+
 </html>
