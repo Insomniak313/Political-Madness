@@ -14,6 +14,9 @@ Un jeu de débat politique interactif où vous affrontez des personnages IA avec
 
 ## 🚀 Installation et Utilisation
 
+### 🌐 Prévisualisation en ligne
+[![Prévisualiser le jeu](https://img.shields.io/badge/🎮%20Prévisualiser%20le%20jeu-htmlpreview.github.io-blue?style=for-the-badge)](https://htmlpreview.github.io/?https://github.com/Insomniak313/Political-Madness/blob/main/index.html)
+
 ### Méthode 1 : Serveur local
 ```bash
 # Cloner le projet
