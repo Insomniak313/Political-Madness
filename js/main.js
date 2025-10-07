@@ -220,19 +220,19 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
             modal.innerHTML = `
-                <div class="bg-white rounded-2xl p-6 max-w-md w-full card-shadow">
+                <div class="bg-white rounded-2xl p-6 max-w-md w-full card-shadow modal-content">
                     <div class="text-center mb-4">
                         <h3 class="text-xl font-bold text-gray-800 mb-2">Clé API Google</h3>
                         <p class="text-gray-600 text-sm">Entrez votre clé API Google pour utiliser l'IA avancée</p>
                     </div>
                     <div class="mb-4">
-                        <input type="password" id="apiKeyInput" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Votre clé API Google">
+                        <input type="password" id="apiKeyInput" class="w-full input-field px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Votre clé API Google">
                     </div>
-                    <div class="flex space-x-3">
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                         <button id="cancelApiKey" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
                             Annuler
                         </button>
-                        <button id="confirmApiKey" class="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                        <button id="confirmApiKey" class="flex-1 btn-primary text-white py-2 px-4 rounded-lg transition-colors">
                             Confirmer
                         </button>
                     </div>
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
             info: 'bg-blue-500'
         };
 
-        notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in`;
+        notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in notification`;
         notification.textContent = message;
 
         document.body.appendChild(notification);
@@ -290,7 +290,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Supprimer après 3 secondes
         setTimeout(() => {
             if (document.body.contains(notification)) {
-                document.body.removeChild(notification);
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
             }
         }, 3000);
     }

@@ -283,13 +283,20 @@ class PoliticalMadnessGame {
         bar.style.width = `${score}%`;
         scoreText.textContent = `${Math.round(score)}%`;
         
-        // Changer la couleur selon le score
+        // Changer la couleur selon le score avec des transitions plus fluides
         if (score < 30) {
-            bar.className = 'persuasion-bar bg-gradient-to-r from-red-500 to-red-600 h-4 rounded-full transition-all duration-500';
+            bar.className = 'persuasion-bar bg-gradient-to-r from-red-500 to-red-600 h-4 rounded-full transition-all duration-700 ease-out';
         } else if (score < 70) {
-            bar.className = 'persuasion-bar bg-gradient-to-r from-yellow-500 to-orange-500 h-4 rounded-full transition-all duration-500';
+            bar.className = 'persuasion-bar bg-gradient-to-r from-yellow-500 to-orange-500 h-4 rounded-full transition-all duration-700 ease-out';
         } else {
-            bar.className = 'persuasion-bar bg-gradient-to-r from-green-500 to-green-600 h-4 rounded-full transition-all duration-500';
+            bar.className = 'persuasion-bar bg-gradient-to-r from-green-500 to-green-600 h-4 rounded-full transition-all duration-700 ease-out';
+        }
+        
+        // Ajouter une animation de pulsation pour les scores extrêmes
+        if (score < 20 || score > 80) {
+            bar.classList.add('pulse-animation');
+        } else {
+            bar.classList.remove('pulse-animation');
         }
     }
 

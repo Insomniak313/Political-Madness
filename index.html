@@ -7,22 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@google/generative-ai@0.2.1/dist/index.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .card-shadow { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
-        .persuasion-bar { transition: all 0.5s ease-in-out; }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .pulse-animation { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
     <!-- Splash Screen -->
-    <div id="splashScreen" class="fixed inset-0 gradient-bg flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full card-shadow fade-in">
+    <div id="splashScreen" class="fixed inset-0 gradient-bg flex items-center justify-center p-4 z-50 modal-overlay">
+        <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full card-shadow fade-in modal-content">
             <div class="text-center mb-8">
                 <h1 class="text-4xl font-bold text-gray-800 mb-2">🗳️ Political Madness</h1>
                 <p class="text-gray-600">Débattez avec l'IA sur des sujets clivants</p>
@@ -31,12 +21,12 @@
             <form id="gameConfig" class="space-y-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Votre nom</label>
-                    <input type="text" id="playerName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Entrez votre nom" required>
+                    <input type="text" id="playerName" class="w-full input-field px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Entrez votre nom" required>
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Difficulté</label>
-                    <select id="difficulty" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <select id="difficulty" class="w-full input-field px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <option value="facile">Facile</option>
                         <option value="moyen" selected>Moyen</option>
                         <option value="difficile">Difficile</option>
@@ -45,7 +35,7 @@
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Thème</label>
-                    <select id="theme" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <select id="theme" class="w-full input-field px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <option value="politique">Politique</option>
                         <option value="societe">Société</option>
                         <option value="economie">Économie</option>
@@ -58,7 +48,7 @@
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Adversaire IA</label>
-                    <select id="aiOpponent" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <select id="aiOpponent" class="w-full input-field px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <option value="conservateur">Alex - Conservateur</option>
                         <option value="liberal">Marie - Libérale</option>
                         <option value="centriste">Thomas - Centriste</option>
@@ -80,7 +70,7 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105">
+                <button type="submit" class="w-full btn-primary text-white py-3 px-6 rounded-lg font-semibold transform hover:scale-105">
                     Commencer le jeu
                 </button>
                 
@@ -112,36 +102,36 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 p-4 space-y-4 min-h-screen">
+        <div class="flex-1 p-4 space-y-4 min-h-screen max-w-4xl mx-auto">
             <!-- Journalist Statement -->
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+            <div class="debate-card journalist p-4 rounded-r-lg">
                 <div class="flex items-start">
                     <i class="fas fa-microphone text-yellow-600 text-xl mr-3 mt-1"></i>
-                    <div>
+                    <div class="flex-1">
                         <h3 class="font-semibold text-gray-800 mb-2">Journaliste</h3>
-                        <p id="journalistStatement" class="text-gray-700"></p>
+                        <p id="journalistStatement" class="text-gray-700 leading-relaxed"></p>
                     </div>
                 </div>
             </div>
 
             <!-- AI Response -->
-            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
+            <div class="debate-card ai p-4 rounded-r-lg">
                 <div class="flex items-start">
                     <i class="fas fa-robot text-blue-600 text-xl mr-3 mt-1"></i>
-                    <div>
+                    <div class="flex-1">
                         <h3 id="aiOpponentName" class="font-semibold text-gray-800 mb-2"></h3>
-                        <p id="aiResponse" class="text-gray-700"></p>
+                        <p id="aiResponse" class="text-gray-700 leading-relaxed"></p>
                     </div>
                 </div>
             </div>
 
             <!-- Player Input -->
-            <div class="bg-white rounded-lg shadow-sm border p-4">
+            <div class="bg-white rounded-lg shadow-sm border p-4 debate-card player">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Votre réponse</label>
-                <textarea id="playerInput" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" rows="3" placeholder="Exprimez votre opinion..."></textarea>
-                <div class="flex justify-between items-center mt-3">
+                <textarea id="playerInput" class="w-full input-field px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" rows="3" placeholder="Exprimez votre opinion..."></textarea>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-3 gap-2">
                     <span class="text-sm text-gray-500">Caractères: <span id="charCount">0</span>/500</span>
-                    <button id="sendResponse" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button id="sendResponse" class="btn-primary text-white px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto">
                         Envoyer
                     </button>
                 </div>
@@ -149,11 +139,11 @@
         </div>
 
         <!-- Persuasion Gauge -->
-        <div class="bg-white border-t p-4">
+        <div class="bg-white border-t p-4 max-w-4xl mx-auto">
             <div class="text-center mb-3">
                 <h3 class="font-semibold text-gray-800">Niveau de persuasion</h3>
             </div>
-            <div class="relative">
+            <div class="relative persuasion-gauge">
                 <div class="w-full bg-gray-200 rounded-full h-4">
                     <div id="persuasionBar" class="persuasion-bar bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-4 rounded-full transition-all duration-500" style="width: 50%"></div>
                 </div>
@@ -170,14 +160,14 @@
     </div>
 
     <!-- Summary Modal -->
-    <div id="summaryModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-96 overflow-y-auto card-shadow">
+    <div id="summaryModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal-overlay">
+        <div class="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-96 overflow-y-auto card-shadow modal-content">
             <div class="text-center mb-4">
                 <h3 class="text-2xl font-bold text-gray-800">Résumé du débat</h3>
             </div>
-            <div id="summaryContent" class="text-gray-700 mb-6"></div>
+            <div id="summaryContent" class="text-gray-700 mb-6 leading-relaxed"></div>
             <div class="text-center">
-                <button id="nextDuel" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-8 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200">
+                <button id="nextDuel" class="btn-primary text-white py-3 px-8 rounded-lg font-semibold transition-all duration-200">
                     Duel suivant
                 </button>
             </div>
@@ -185,11 +175,11 @@
     </div>
 
     <!-- Game Over Modal -->
-    <div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full card-shadow text-center">
+    <div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal-overlay">
+        <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full card-shadow text-center modal-content">
             <h2 class="text-3xl font-bold text-gray-800 mb-4">Fin du jeu !</h2>
-            <div id="finalScore" class="text-xl text-gray-600 mb-6"></div>
-            <button id="playAgain" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-8 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200">
+            <div id="finalScore" class="text-xl text-gray-600 mb-6 leading-relaxed"></div>
+            <button id="playAgain" class="btn-primary text-white py-3 px-8 rounded-lg font-semibold transition-all duration-200">
                 Rejouer
             </button>
         </div>
