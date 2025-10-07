@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Political Madness</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@langchain/core@0.1.0/dist/index.js"></script>
-    <script src="https://unpkg.com/@langchain/google-genai@0.0.14/dist/index.js"></script>
+    <script src="https://unpkg.com/@google/generative-ai@0.2.1/dist/index.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -84,6 +83,12 @@
                 <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105">
                     Commencer le jeu
                 </button>
+                
+                <div class="text-center mt-4">
+                    <button type="button" id="resetApiKey" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Réinitialiser la clé API
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -107,7 +112,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 p-4 space-y-4">
+        <div class="flex-1 p-4 space-y-4 min-h-screen">
             <!-- Journalist Statement -->
             <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
                 <div class="flex items-start">
