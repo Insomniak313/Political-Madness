@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       showLoadingState();
       await game.initializeGame(config);
+      hideLoadingState();
       showGameScreen();
       showNotification(`Bienvenue ${config.playerName} ! Le débat commence.`, 'success');
     } catch (error) {
@@ -159,10 +160,17 @@ document.addEventListener('DOMContentLoaded', () => {
   function showGameScreen(): void {
     splashScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
+    // S'assurer que le textarea est activé quand le jeu commence
+    playerInput.disabled = false;
+    sendResponse.disabled = false;
   }
 
   function hideSummaryModal(): void {
     summaryModal.classList.add('hidden');
+    // Réactiver le textarea après la fermeture du modal
+    playerInput.disabled = false;
+    sendResponse.disabled = false;
+    playerInput.focus();
   }
 
   function hideGameOverModal(): void {
@@ -184,6 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
     sendResponse.disabled = false;
     sendResponse.innerHTML = 'Envoyer';
     playerInput.disabled = false;
+    
+    // S'assurer que le textarea est focusable
+    playerInput.focus();
   }
 
   function showNotification(message: string, type: NotificationType = 'info'): void {

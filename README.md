@@ -3,9 +3,9 @@
 Un jeu de débat politique interactif où vous affrontez une IA sur des sujets clivants. Développé avec TypeScript, Vite et l'API Google Generative AI (Gemini).
 
 [![Deploy Status](https://github.com/your-username/political-madness/actions/workflows/deploy.yml/badge.svg)](https://github.com/your-username/political-madness/actions/workflows/deploy.yml)
-[![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-blue?style=for-the-badge)](https://your-username.github.io/political-madness/)
+[![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-blue?style=for-the-badge)](https://insomniak313.github.io/Political-Madness/)
 
-> **🎮 [Jouer maintenant](https://your-username.github.io/political-madness/)** - Version en ligne déployée automatiquement
+> **🎮 [Jouer maintenant](https://insomniak313.github.io/Political-Madness/)** - Version en ligne déployée automatiquement
 
 ## 🚀 Fonctionnalités
 
@@ -51,7 +51,7 @@ Un jeu de débat politique interactif où vous affrontez une IA sur des sujets c
 ### 🌐 Version en ligne (recommandée)
 
 Le site est automatiquement déployé sur GitHub Pages à chaque push sur la branche `main` :
-- **URL** : https://your-username.github.io/political-madness/
+- **URL** : https://insomniak313.github.io/Political-Madness/
 - **Déploiement automatique** : ✅ Activé via GitHub Actions
 - **Mise à jour** : Automatique à chaque merge sur `main`
 
