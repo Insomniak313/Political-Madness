@@ -1,0 +1,247 @@
+/* Styles personnalisés pour Political Madness */
+
+/* Import de la police Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Variables CSS pour la cohérence */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --transition-smooth: all 0.3s ease-in-out;
+    --border-radius: 0.75rem;
+    --spacing-unit: 1rem;
+}
+
+/* Configuration de base */
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: #374151;
+}
+
+/* Classes utilitaires */
+.gradient-bg {
+    background: var(--primary-gradient);
+}
+
+.card-shadow {
+    box-shadow: var(--card-shadow);
+}
+
+.persuasion-bar {
+    transition: var(--transition-smooth);
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Styles pour les modales */
+.modal-overlay {
+    backdrop-filter: blur(4px);
+}
+
+/* Styles pour les boutons */
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    transition: var(--transition-smooth);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Styles pour les inputs */
+.input-field {
+    transition: var(--transition-smooth);
+}
+
+.input-field:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1);
+}
+
+/* Styles pour les cartes de débat */
+.debate-card {
+    border-left: 4px solid;
+    transition: var(--transition-smooth);
+}
+
+.debate-card:hover {
+    transform: translateX(4px);
+}
+
+.debate-card.journalist {
+    border-color: #f59e0b;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+}
+
+.debate-card.ai {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+}
+
+.debate-card.player {
+    border-color: #10b981;
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+}
+
+/* Styles pour la jauge de persuasion */
+.persuasion-gauge {
+    position: relative;
+    overflow: hidden;
+}
+
+.persuasion-gauge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        #ef4444 0%, 
+        #f59e0b 25%, 
+        #eab308 50%, 
+        #84cc16 75%, 
+        #22c55e 100%);
+    border-radius: inherit;
+    opacity: 0.1;
+}
+
+/* Styles pour les notifications */
+.notification {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+    .modal-content {
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+    }
+    
+    .debate-card {
+        padding: 1rem;
+    }
+    
+    .btn-primary {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .persuasion-gauge {
+        height: 0.75rem;
+    }
+    
+    .debate-card {
+        padding: 0.75rem;
+    }
+}
+
+/* Styles pour l'état de chargement */
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Styles pour les états d'erreur */
+.error-state {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+}
+
+.warning-state {
+    border-color: #f59e0b;
+    background-color: #fffbeb;
+}
+
+.success-state {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+
+/* Amélioration de l'accessibilité */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Focus visible pour l'accessibilité */
+.focus-visible:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Styles pour les transitions de page */
+.page-transition {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.page-enter {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.page-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
+}
