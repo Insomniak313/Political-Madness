@@ -1,140 +1,172 @@
 # 🗳️ Political Madness
-*Where Persuasion Meets Chaos*
 
-Un jeu de débat politique interactif où vous affrontez des personnages IA avec différentes personnalités politiques. Testez vos compétences de persuasion et défendez vos positions sur des sujets clivants !
+Un jeu de débat politique interactif où vous affrontez une IA sur des sujets clivants. Développé avec TypeScript, Vite et l'API Google Generative AI (Gemini).
 
-## 🎮 Fonctionnalités
+## 🚀 Fonctionnalités
 
-- **4 Personnages IA uniques** : Alex (Conservateur), Marie (Libérale), Thomas (Centriste), Luna (Radicale)
-- **6 Thèmes de débat** : Politique, Société, Économie, Environnement, Santé, Éducation
-- **3 Niveaux de difficulté** : Facile, Moyen, Difficile
-- **Système de persuasion** : Barre de progression en temps réel
-- **IA avancée** : Réponses contextuelles et personnalisées avec Google Gemini
-- **Interface moderne** : Design responsive avec Tailwind CSS
+- **Débats intelligents** : Débattez avec une IA personnalisée sur des sujets controversés
+- **4 personnages IA** : Chaque adversaire a sa propre personnalité et style de communication
+  - Alex (Conservateur) - Traditionnel et prudent
+  - Marie (Libérale) - Progressiste et ouverte d'esprit
+  - Thomas (Centriste) - Équilibré et pragmatique
+  - Luna (Radicale) - Passionnée et idéaliste
+- **Plusieurs thèmes** : Politique, Société, Économie, Environnement, Santé, Éducation
+- **Système de persuasion** : Vos arguments influencent une jauge de persuasion
+- **3 niveaux de difficulté** : Facile, Moyen, Difficile
+- **5 duels par partie** : Chaque duel comprend 3 échanges
 
-## 🚀 Installation et Utilisation
+## 🛠️ Technologies utilisées
 
-### 🌐 Prévisualisation en ligne
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-🚀%20Try%20it%20now-blue?style=for-the-badge&logo=github)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Insomniak313/Political-Madness/main/index.html)
+- **TypeScript** : Typage statique pour une meilleure maintenabilité
+- **Vite** : Build tool moderne et rapide
+- **Tailwind CSS** : Framework CSS utilitaire
+- **Google Generative AI** : API Gemini pour les réponses intelligentes de l'IA
+- **Font Awesome** : Icônes
 
-### Méthode 1 : Serveur local
+## 📋 Prérequis
+
+- Node.js 18+ et npm/yarn
+- Une connexion internet (pour l'API Google Generative AI)
+
+## 🔧 Installation
+
+1. **Cloner le dépôt**
+   ```bash
+   git clone <url-du-repo>
+   cd Political-Madness
+   ```
+
+2. **Installer les dépendances**
+   ```bash
+   npm install
+   ```
+
+## 🎮 Démarrage
+
+### Mode développement
+
 ```bash
-# Cloner le projet
-git clone <repository-url>
-cd political-madness
-
-# Démarrer un serveur local
-python3 -m http.server 8080
-# ou
-npx serve .
-
-# Ouvrir dans le navigateur
-http://localhost:8080
+npm run dev
 ```
 
-### Méthode 2 : Ouverture directe
-Ouvrez simplement le fichier `index.html` dans votre navigateur web.
+L'application sera accessible sur `http://localhost:3000`
 
-## 🔑 Configuration de l'IA
+### Build de production
 
-Pour utiliser les fonctionnalités avancées de l'IA, vous aurez besoin d'une clé API Google :
+```bash
+npm run build
+```
 
-1. Allez sur [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Créez une nouvelle clé API
-3. Entrez-la dans le jeu quand demandé
+Les fichiers de production seront générés dans le dossier `dist/`
 
-*Note : Le jeu fonctionne aussi sans clé API avec des réponses prédéfinies.*
+### Prévisualisation de production
+
+```bash
+npm run preview
+```
+
+### Vérification des types
+
+```bash
+npm run type-check
+```
+
+## 📁 Structure du projet
+
+```
+Political-Madness/
+├── src/
+│   ├── types/
+│   │   └── index.ts          # Types et interfaces TypeScript
+│   ├── ai-characters.ts      # Gestion des personnages IA
+│   ├── game-logic.ts         # Logique du jeu
+│   ├── langchain-config.ts   # Configuration de l'API Gemini
+│   ├── main.ts              # Point d'entrée principal
+│   └── styles.css           # Styles personnalisés
+├── index.html               # Page HTML principale
+├── vite.config.ts          # Configuration Vite
+├── tsconfig.json           # Configuration TypeScript
+├── package.json            # Dépendances et scripts
+└── README.md               # Ce fichier
+```
 
 ## 🎯 Comment jouer
 
-1. **Configuration** : Choisissez votre nom, difficulté, thème et adversaire IA
-2. **Position** : Définissez si vous êtes "Pour" ou "Contre" l'idée proposée
-3. **Débat** : Répondez aux arguments de l'IA en 3 échanges maximum
-4. **Persuasion** : Surveillez votre barre de persuasion (0-100%)
-5. **Victoire** : Terminez 5 duels avec le meilleur score possible !
+1. **Configurez votre partie** :
+   - Entrez votre nom
+   - Choisissez la difficulté
+   - Sélectionnez un thème
+   - Choisissez votre adversaire IA
+   - Prenez position (pour ou contre)
 
-## 🧠 Personnages IA
+2. **Débattez** :
+   - Lisez l'idée clivante proposée par le journaliste
+   - Répondez à l'argument de l'IA
+   - Construisez vos arguments sur 3 échanges
 
-### 👔 Alex - Le Conservateur
-- **Personnalité** : Traditionnel, respectueux des institutions
-- **Style** : Formel, références historiques
-- **Agressivité** : 6/10
-- **Valeurs** : Ordre, stabilité, famille traditionnelle
-
-### 🌱 Marie - La Libérale  
-- **Personnalité** : Progressiste, ouverte d'esprit
-- **Style** : Chaleureuse, exemples concrets
-- **Agressivité** : 4/10
-- **Valeurs** : Liberté, égalité, justice sociale
-
-### ⚖️ Thomas - Le Centriste
-- **Personnalité** : Équilibré, pragmatique
-- **Style** : Analytique, cherche le consensus
-- **Agressivité** : 3/10
-- **Valeurs** : Compromis, efficacité, dialogue
-
-### 🔥 Luna - La Radicale
-- **Personnalité** : Passionnée, idéaliste
-- **Style** : Émotionnelle, appels à l'action
-- **Agressivité** : 9/10
-- **Valeurs** : Révolution, justice absolue, changement radical
-
-## 🛠️ Technologies Utilisées
-
-- **Frontend** : HTML5, CSS3, JavaScript ES6+
-- **Styling** : Tailwind CSS
-- **IA** : Google Gemini 1.5 Flash
-- **Icons** : Font Awesome
-- **Fonts** : Google Fonts (Inter)
-
-## 📁 Structure du Projet
-
-```
-political-madness/
-├── index.html              # Page principale
-├── js/
-│   ├── main.js            # Logique principale et interactions
-│   ├── game-logic.js      # Mécaniques de jeu
-│   ├── ai-characters.js   # Personnages IA
-│   └── langchain-config.js # Configuration IA
-└── README.md              # Documentation
-```
+3. **Gagnez** :
+   - Vos arguments influencent la jauge de persuasion
+   - Plus vous êtes convaincant, plus la jauge penche en votre faveur
+   - Complétez 5 duels pour terminer la partie
 
 ## 🎨 Personnalisation
 
-Vous pouvez facilement :
-- Ajouter de nouveaux thèmes dans `game-logic.js`
-- Créer de nouveaux personnages dans `ai-characters.js`
-- Modifier l'interface dans `index.html`
-- Ajuster les paramètres IA dans `langchain-config.js`
+### Modifier les thèmes
+
+Les thèmes sont définis dans `src/game-logic.ts` dans l'objet `themes`. Vous pouvez ajouter ou modifier les idées clivantes.
+
+### Ajouter un personnage IA
+
+Dans `src/ai-characters.ts`, ajoutez un nouveau personnage dans le constructeur de `AICharacterManager`.
+
+### Modifier les paramètres de l'IA
+
+Dans `src/langchain-config.ts`, vous pouvez ajuster les paramètres de génération :
+- `temperature` : Créativité des réponses (0-1)
+- `topP` : Diversité des réponses (0-1)
+- `topK` : Nombre de tokens considérés
+- `maxOutputTokens` : Longueur maximale des réponses
+
+## 🔐 Sécurité
+
+⚠️ **Important** : La clé API est actuellement hardcodée dans le code (`src/main.ts`). Pour une application en production, il est recommandé de :
+- Utiliser des variables d'environnement
+- Implémenter un backend qui gère l'API
+- Ne jamais exposer les clés API côté client
 
 ## 🐛 Dépannage
 
-**Le jeu ne se charge pas ?**
-- Vérifiez que vous utilisez un serveur local (pas d'ouverture directe du fichier)
-- Vérifiez la console du navigateur pour les erreurs
-
-**L'IA ne répond pas ?**
-- Vérifiez votre clé API Google
+### L'IA ne répond pas
 - Vérifiez votre connexion internet
-- Le jeu utilise des réponses de secours si l'IA échoue
+- Vérifiez que la clé API Google est valide
+- Consultez la console du navigateur pour les erreurs
 
-**Problèmes de performance ?**
-- Fermez les autres onglets du navigateur
-- Vérifiez que JavaScript est activé
+### Erreurs de build
+```bash
+# Nettoyer les dépendances
+rm -rf node_modules package-lock.json
+npm install
 
-## 📄 Licence
+# Nettoyer le cache Vite
+rm -rf dist .vite
+npm run build
+```
 
-Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
+## 📝 License
+
+Ce projet est sous licence privée. Tous droits réservés.
+
+## 👤 Auteur
+
+Développé pour Fun par Adrien FOURNIE EI
 
 ## 🤝 Contribution
 
-Les contributions sont les bienvenues ! N'hésitez pas à :
-- Signaler des bugs
-- Proposer de nouvelles fonctionnalités
-- Améliorer la documentation
-- Ajouter de nouveaux personnages ou thèmes
+Ce projet est actuellement privé. Pour toute suggestion ou rapport de bug, contactez le développeur.
 
----
+## 📚 Ressources
 
-*Amusez-vous bien et que le meilleur orateur gagne ! 🏆*
+- [Documentation Vite](https://vitejs.dev/)
+- [Documentation TypeScript](https://www.typescriptlang.org/)
+- [Documentation Tailwind CSS](https://tailwindcss.com/)
+- [Google Generative AI](https://ai.google.dev/)
