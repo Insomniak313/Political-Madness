@@ -38,6 +38,16 @@ class LangChainConfig {
             return response.text();
         } catch (error) {
             console.error('Erreur lors de la génération de réponse:', error);
+            
+            // Gestion spécifique des erreurs
+            if (error.message.includes('API_KEY_INVALID')) {
+                throw new Error('Clé API invalide. Veuillez la vérifier.');
+            } else if (error.message.includes('QUOTA_EXCEEDED')) {
+                throw new Error('Quota API dépassé. Réessayez plus tard.');
+            } else if (error.message.includes('NETWORK_ERROR')) {
+                throw new Error('Erreur de réseau. Vérifiez votre connexion.');
+            }
+            
             throw error;
         }
     }
