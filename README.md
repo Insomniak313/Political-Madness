@@ -2,6 +2,11 @@
 
 Un jeu de débat politique interactif où vous affrontez une IA sur des sujets clivants. Développé avec TypeScript, Vite et l'API Google Generative AI (Gemini).
 
+[![Deploy Status](https://github.com/your-username/political-madness/actions/workflows/deploy.yml/badge.svg)](https://github.com/your-username/political-madness/actions/workflows/deploy.yml)
+[![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-blue?style=for-the-badge)](https://your-username.github.io/political-madness/)
+
+> **🎮 [Jouer maintenant](https://your-username.github.io/political-madness/)** - Version en ligne déployée automatiquement
+
 ## 🚀 Fonctionnalités
 
 - **Débats intelligents** : Débattez avec une IA personnalisée sur des sujets controversés
@@ -43,7 +48,14 @@ Un jeu de débat politique interactif où vous affrontez une IA sur des sujets c
 
 ## 🎮 Démarrage
 
-### Mode développement
+### 🌐 Version en ligne (recommandée)
+
+Le site est automatiquement déployé sur GitHub Pages à chaque push sur la branche `main` :
+- **URL** : https://your-username.github.io/political-madness/
+- **Déploiement automatique** : ✅ Activé via GitHub Actions
+- **Mise à jour** : Automatique à chaque merge sur `main`
+
+### 💻 Mode développement local
 
 ```bash
 npm run dev
@@ -51,7 +63,7 @@ npm run dev
 
 L'application sera accessible sur `http://localhost:3000`
 
-### Build de production
+### 🏗️ Build de production
 
 ```bash
 npm run build
@@ -59,13 +71,13 @@ npm run build
 
 Les fichiers de production seront générés dans le dossier `dist/`
 
-### Prévisualisation de production
+### 👀 Prévisualisation de production
 
 ```bash
 npm run preview
 ```
 
-### Vérification des types
+### 🔍 Vérification des types
 
 ```bash
 npm run type-check
