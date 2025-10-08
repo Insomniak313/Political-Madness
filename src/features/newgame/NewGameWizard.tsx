@@ -1015,12 +1015,9 @@ export class NewGameWizard {
     this.stateManager.dispatch({ type: 'SET_ERROR_QUESTION', payload: null });
 
     try {
-      console.log('Wizard: Starting question generation (3 questions)');
-
       // Generate 3 questions
       const questions: string[] = [];
       for (let i = 0; i < 3; i++) {
-        console.log(`Wizard: Generating question ${i + 1}/3`);
         const result = await debateIdeaService.generateDebateIdeaWrapped({
           theme: state.theme!,
           difficulty: state.difficulty,
@@ -1031,7 +1028,6 @@ export class NewGameWizard {
         questions.push(result.question);
       }
 
-      console.log('Wizard: All questions generated successfully:', questions);
       this.stateManager.dispatch({ type: 'SET_QUESTIONS', payload: questions });
 
     } catch (error) {

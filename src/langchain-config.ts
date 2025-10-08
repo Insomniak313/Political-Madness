@@ -35,7 +35,6 @@ class LangChainConfig {
   }
 
   async generateResponse(prompt: string): Promise<string> {
-    console.log('LangChain: generateResponse called, isInitialized:', this.isInitialized, 'model exists:', !!this.model);
     if (!this.isInitialized || !this.model) {
       throw new Error('LangChain n\'est pas initialisé');
     }

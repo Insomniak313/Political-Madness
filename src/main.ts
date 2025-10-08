@@ -27,13 +27,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Initialisation de la nouvelle application
   async function initializeApp(): Promise<void> {
-    console.log('App: Starting initialization');
     try {
       // Initialize audio service first
       await audioService.initialize();
 
       // Initialize LangChain
-      console.log('App: Initializing LangChain');
       const langChainInitialized = await langChainConfig.initialize(FIXED_API_KEY);
       if (!langChainInitialized) {
         console.warn('App: LangChain initialization failed, but continuing');
@@ -53,8 +51,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (homeScreen) {
         // Visibility check completed
       }
-
-      console.log('App: Initialization completed successfully');
 
     } catch (error) {
       console.log('App: Initialization failed', error);
