@@ -27,9 +27,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Initialisation de la nouvelle application
   async function initializeApp(): Promise<void> {
+    console.log('App: Starting initialization');
     try {
       // Initialize audio service first
       await audioService.initialize();
+
+      // Initialize LangChain
+      console.log('App: Initializing LangChain');
+      const langChainInitialized = await langChainConfig.initialize(FIXED_API_KEY);
+      if (!langChainInitialized) {
+        console.warn('App: LangChain initialization failed, but continuing');
+      }
 
       // Set up new screen containers in DOM
       setupScreenContainers();
@@ -40,19 +48,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Initialize character counter for the game screen (still needed)
       initializeCharacterCounter();
 
-      console.log('🚀 Nouvelle interface Home Menu initialisée avec succès');
-      console.log('📍 Vérification: homeScreen element:', document.getElementById('homeScreen'));
-      console.log('📍 Vérification: splashScreen element:', document.getElementById('splashScreen'));
-
       // Force display check
       const homeScreen = document.getElementById('homeScreen');
       if (homeScreen) {
-        console.log('🎨 HomeScreen computed styles:', window.getComputedStyle(homeScreen));
-        console.log('👀 HomeScreen is visible:', homeScreen.offsetWidth > 0 && homeScreen.offsetHeight > 0);
+        // Visibility check completed
       }
 
+      console.log('App: Initialization completed successfully');
+
     } catch (error) {
-      console.error('❌ Erreur lors de l\'initialisation de la nouvelle interface:', error);
+      console.log('App: Initialization failed', error);
       // Fallback: show the old screen if new system fails completely
       showSplashScreen();
     }
@@ -61,83 +66,60 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function setupScreenContainers(): void {
     try {
-      console.log('🔧 Setting up screen containers...');
-
       // Inject HomeMenu into the homeScreen container
       const homeContainer = document.getElementById('homeScreen');
       if (homeContainer) {
-        console.log('✅ Found homeScreen container');
-
         // Create the HomeMenu element
         const homeMenuElement = homeMenu.getElement();
-        console.log('🏗️ HomeMenu element:', homeMenuElement);
-        console.log('🏗️ HomeMenu element HTML:', homeMenuElement.innerHTML);
 
         // Clear container and inject
         homeContainer.innerHTML = '';
-        const injected = homeContainer.appendChild(homeMenuElement);
-
-        console.log('✅ Injected HomeMenu into DOM:', injected);
-        console.log('📋 Final homeContainer HTML:', homeContainer.innerHTML);
+        homeContainer.appendChild(homeMenuElement);
 
         // Force restyle to ensure visibility
         homeContainer.style.display = 'flex';
         homeContainer.style.visibility = 'visible';
 
       } else {
-        console.error('❌ homeScreen container not found!');
-        console.log('🔍 Available elements:', document.querySelectorAll('*').length, 'total elements');
+        // homeScreen container not found
       }
 
       // Inject OptionsScreen into the optionsScreen container
       const optionsContainer = document.getElementById('optionsScreen');
       if (optionsContainer) {
-        console.log('✅ Found optionsScreen container');
-
         // Create the OptionsScreen element
         const optionsScreenElement = optionsScreen.getElement();
-        console.log('🏗️ OptionsScreen element:', optionsScreenElement);
 
         // Clear container and inject
         optionsContainer.innerHTML = '';
-        const injectedOptions = optionsContainer.appendChild(optionsScreenElement);
-
-        console.log('✅ Injected OptionsScreen into DOM:', injectedOptions);
+        optionsContainer.appendChild(optionsScreenElement);
 
         // Ensure it's initially hidden (it should be hidden by default)
         optionsContainer.classList.add('hidden');
 
       } else {
-        console.error('❌ optionsScreen container not found!');
+        // optionsScreen container not found
       }
 
       // Inject NewGameWizard into the newGameScreen container
       const newGameContainer = document.getElementById('newGameScreen');
       if (newGameContainer) {
-        console.log('✅ Found newGameScreen container');
-
         // Create the NewGameWizard element
         const newGameWizard = new NewGameWizard();
         const newGameWizardElement = newGameWizard.getElement();
-        console.log('🏗️ NewGameWizard element:', newGameWizardElement);
 
         // Clear container and inject
         newGameContainer.innerHTML = '';
-        const injectedWizard = newGameContainer.appendChild(newGameWizardElement);
-
-        console.log('✅ Injected NewGameWizard into DOM:', injectedWizard);
+        newGameContainer.appendChild(newGameWizardElement);
 
         // Ensure it's initially hidden (it should be hidden by default)
         newGameContainer.classList.add('hidden');
 
       } else {
-        console.error('❌ newGameScreen container not found!');
+        // newGameScreen container not found
       }
-
-      console.log('🎯 Screen containers setup complete');
     } catch (error) {
-      console.error('💥 Error setting up screen containers:', error);
-      console.error('💥 Error stack:', (error as Error).stack);
+      // Error setting up screen containers
     }
   }
 
@@ -182,6 +164,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    // LangChain is now initialized at app startup, but check just in case
+    // LangChain is now initialized at app startup, but check just in case
     if (!langChainConfig.isInitialized) {
       const initialized = await langChainConfig.initialize(FIXED_API_KEY);
       if (!initialized) {
@@ -197,7 +181,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       showGameScreen();
       showNotification(`Bienvenue ${gameConfig.playerName} ! Le débat commence.`, 'success');
     } catch (error) {
-      console.error('Erreur lors du démarrage du jeu:', error);
       showNotification('Erreur lors du démarrage du jeu', 'error');
       hideLoadingState();
     }
@@ -248,7 +231,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       showGameScreen();
       showNotification(`Bienvenue ${config.playerName} ! Le débat commence.`, 'success');
     } catch (error) {
-      console.error('Erreur lors du démarrage du jeu:', error);
       showNotification('Erreur lors du démarrage du jeu', 'error');
       hideLoadingState();
     }

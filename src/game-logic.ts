@@ -82,12 +82,12 @@ class PoliticalMadnessGame {
             );
             this.gameState.currentIdea = generatedIdea;
           } catch (error) {
-            console.warn('Erreur LangChain, utilisation de l\'idée prédéfinie:', error);
+            // Ignore LangChain errors, use fallback
           }
         }
       }
     } catch (error) {
-      console.error('Erreur lors de la génération de l\'idée:', error);
+      // Ignore generation errors
     }
   }
 
@@ -105,7 +105,6 @@ class PoliticalMadnessGame {
             this.gameState.currentExchange
           );
         } catch (error) {
-          console.warn('Erreur LangChain, utilisation de la réponse générique:', error);
           aiResponse = this.generateFallbackResponse();
         }
       } else {
@@ -122,7 +121,7 @@ class PoliticalMadnessGame {
       this.updatePersuasionScore(aiResponse, playerResponse);
       
     } catch (error) {
-      console.error('Erreur lors de la génération de la réponse IA:', error);
+      // Ignore generation errors
     }
   }
 
@@ -197,7 +196,6 @@ class PoliticalMadnessGame {
             this.gameState.persuasionScore
           );
         } catch (error) {
-          console.warn('Erreur LangChain, utilisation du résumé générique:', error);
           summary = this.generateFallbackSummary();
         }
       } else {
@@ -206,7 +204,7 @@ class PoliticalMadnessGame {
       
       this.showSummaryModal(summary);
     } catch (error) {
-      console.error('Erreur lors de la génération du résumé:', error);
+      // Ignore generation errors
     }
   }
 
@@ -339,7 +337,6 @@ class PoliticalMadnessGame {
       try {
         message = await langChainConfig.generateGameOverMessage(finalScore, this.gameState.playerName);
       } catch (error) {
-        console.warn('Erreur LangChain, utilisation du message générique:', error);
         message = this.generateFallbackGameOverMessage(finalScore);
       }
     } else {

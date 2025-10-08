@@ -23,7 +23,6 @@ export class PrefsService {
       const stored = localStorage.getItem(STORAGE_KEYS.PLAYER_NAME);
       return stored ? stored.trim() : '';
     } catch (error) {
-      console.warn('Failed to read player name from localStorage:', error);
       return '';
     }
   }
@@ -37,7 +36,7 @@ export class PrefsService {
         localStorage.removeItem(STORAGE_KEYS.PLAYER_NAME);
       }
     } catch (error) {
-      console.warn('Failed to save player name to localStorage:', error);
+      // Ignore save errors
     }
   }
 
@@ -53,7 +52,7 @@ export class PrefsService {
         }
       }
     } catch (error) {
-      console.warn('Failed to read audio preferences from localStorage:', error);
+      // Ignore read errors
     }
     return { ...DEFAULT_AUDIO_PREFS };
   }
@@ -67,7 +66,7 @@ export class PrefsService {
       };
       localStorage.setItem(STORAGE_KEYS.AUDIO_PREFS, JSON.stringify(validatedPrefs));
     } catch (error) {
-      console.warn('Failed to save audio preferences to localStorage:', error);
+      // Ignore save errors
     }
   }
 
@@ -88,7 +87,7 @@ export class PrefsService {
         localStorage.removeItem(key);
       });
     } catch (error) {
-      console.warn('Failed to clear preferences from localStorage:', error);
+      // Ignore clear errors
     }
   }
 }

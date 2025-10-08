@@ -2,6 +2,7 @@
 // Provides timeout, abort, validation, and error handling
 
 import { langChainConfig } from '../langchain-config';
+import { logger } from '../services/logger';
 import type { Difficulty, Theme } from '../types';
 
 export interface DebateIdeaParams {
@@ -34,6 +35,17 @@ export class DebateIdeaService {
       timeoutMs = this.DEFAULT_TIMEOUT
     } = params;
 
+    const startTime = Date.now();
+
+    // Log request
+    logger.info('agent:question', 'request', {
+      theme,
+      difficulty,
+      playerName: playerName ? '[REDACTED]' : undefined,
+      seed,
+      timeoutMs
+    });
+
     // Create abort controller for timeout if not provided
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -59,9 +71,27 @@ export class DebateIdeaService {
       // Validate and clean the result
       const cleanedQuestion = this.validateAndCleanQuestion(question);
 
+      // Log success
+      const duration = Date.now() - startTime;
+      logger.info('agent:question', 'success', {
+        ms: duration,
+        questionPreview: cleanedQuestion.substring(0, 50) + (cleanedQuestion.length > 50 ? '...' : '')
+      });
+
       return { question: cleanedQuestion };
 
     } catch (error) {
+      // Log failure
+      const duration = Date.now() - startTime;
+      const errType = error instanceof Error ? (error.name === 'AbortError' ? 'timeout' : 'error') : 'unknown';
+      const message = error instanceof Error ? error.message : String(error);
+
+      logger.error('agent:question', 'failure', {
+        ms: duration,
+        errType,
+        message
+      });
+
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
           throw new Error('La génération de l\'idée a pris trop de temps. Veuillez réessayer.');
@@ -155,7 +185,10 @@ export class DebateIdeaService {
         }
 
         // Log retry attempt
-        console.warn(`Tentative ${attempt + 1} échouée:`, lastError.message);
+        logger.warn('agent:question', 'retry', {
+          attempt: attempt + 1,
+          error: lastError.message
+        });
 
         // Wait before retry (except on last attempt)
         if (attempt < DebateIdeaService.MAX_RETRIES) {

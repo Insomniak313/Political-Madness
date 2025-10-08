@@ -28,15 +28,14 @@ class LangChainConfig {
       }) as GenerativeModel;
 
       this.isInitialized = true;
-      console.log('LangChain configuré avec succès');
       return true;
     } catch (error) {
-      console.error('Erreur lors de l\'initialisation de LangChain:', error);
       return false;
     }
   }
 
   async generateResponse(prompt: string): Promise<string> {
+    console.log('LangChain: generateResponse called, isInitialized:', this.isInitialized, 'model exists:', !!this.model);
     if (!this.isInitialized || !this.model) {
       throw new Error('LangChain n\'est pas initialisé');
     }
@@ -46,7 +45,6 @@ class LangChainConfig {
       const response = await result.response;
       return response.text();
     } catch (error) {
-      console.error('Erreur lors de la génération de réponse:', error);
 
       // Gestion spécifique des erreurs
       if (error instanceof Error) {
@@ -151,4 +149,5 @@ class LangChainConfig {
 
 // Instance globale
 export const langChainConfig = new LangChainConfig();
+
 

@@ -4,6 +4,7 @@
 import { audioService } from '../../services/audioService';
 import { PrefsService } from '../../services/prefsService';
 import { phase0StateManager, Phase0State } from './state';
+import { debateIdeaService } from '../../agents/debateIdea.service';
 
 export class NewGameWizard {
   private container: HTMLElement;
@@ -201,8 +202,6 @@ export class NewGameWizard {
   }
 
   private renderCurrentStep(state: Phase0State): HTMLElement {
-    console.log('🎯 Rendering step:', state.step, 'with state:', state);
-
     switch (state.step) {
       case 1:
         return this.createDifficultyStep();
@@ -211,10 +210,8 @@ export class NewGameWizard {
         return this.createThemeStep();
 
       case 3:
-        console.log('📋 Step 3: Checking question generation - questions:', !!state.questions, 'loading:', state.loadingQuestion, 'error:', !!state.errorQuestion, 'generating:', this.isGeneratingQuestion);
         // Trigger question generation when entering step 3 (only if not already generating)
         if (!state.questions && !state.loadingQuestion && !state.errorQuestion && !this.isGeneratingQuestion) {
-          console.log('🚀 Triggering question generation for step 3');
           this.generateQuestion();
         }
         return this.createQuestionChoiceStep();
@@ -226,7 +223,6 @@ export class NewGameWizard {
         return this.createStartStep();
 
       default:
-        console.warn('⚠️ Unknown step:', state.step);
         return this.createFallbackStep('Configuration', 'Préparation du jeu...');
     }
   }
@@ -703,7 +699,6 @@ export class NewGameWizard {
 
       const retryButton = step.querySelector('#retryButton') as HTMLButtonElement;
       retryButton?.addEventListener('click', () => {
-        console.log('🔄 Retrying question generation...');
         if (!this.isGeneratingQuestion) {
           this.generateQuestion();
         }
@@ -1008,14 +1003,11 @@ export class NewGameWizard {
   }
 
   private async generateQuestion(): Promise<void> {
-    console.log('🔄 generateQuestion called');
     // Prevent duplicate calls
     if (this.isGeneratingQuestion) {
-      console.log('⚠️ Question generation already in progress, skipping...');
       return;
     }
 
-    console.log('🔄 Starting question generation...');
     const state = this.stateManager.getState();
 
     this.isGeneratingQuestion = true;
@@ -1023,138 +1015,26 @@ export class NewGameWizard {
     this.stateManager.dispatch({ type: 'SET_ERROR_QUESTION', payload: null });
 
     try {
-      // Simulate API call delay for testing
-      console.log('⏳ Simulating API call delay...');
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('Wizard: Starting question generation (3 questions)');
 
-      // Generate placeholder question based on theme and difficulty
-      const placeholderQuestions: Record<string, Record<string, string[]>> = {
-        geopolitique: {
-          facile: [
-            "L'Union Européenne devrait accueillir plus de réfugiés",
-            "Les sanctions contre la Russie devraient être levées",
-            "L'OTAN devrait intervenir militairement en Ukraine"
-          ],
-          moyen: [
-            "Le protectionnisme économique est nécessaire pour protéger les emplois locaux",
-            "Les accords de libre-échange nuisent à la souveraineté nationale",
-            "L'immigration clandestine devrait être considérée comme un délit"
-          ],
-          difficile: [
-            "La realpolitik justifie les alliances avec des régimes autoritaires",
-            "L'ingérence humanitaire dans les affaires intérieures des États souverains est moralement justifiable",
-            "Le multilatéralisme onusien est obsolète face aux nouveaux défis géopolitiques"
-          ],
-          'tres-difficile': [
-            "La théorie du réalisme offensif de John Mearsheimer explique mieux les relations internationales que le libéralisme institutionnel",
-            "L'émergence d'un monde multipolaire nécessite une refonte complète du droit international public",
-            "La géoéconomie supplante la géopolitique traditionnelle comme principal déterminant des rapports de force internationaux"
-          ]
-        },
-        societe: {
-          facile: [
-            "Le mariage pour tous devrait être autorisé",
-            "L'euthanasie devrait être légalisée",
-            "Le port du voile devrait être interdit dans l'espace public"
-          ],
-          moyen: [
-            "La gestation pour autrui devrait être autorisée en France",
-            "La théorie du genre devrait être enseignée à l'école primaire",
-            "Les réseaux sociaux devraient être interdits aux mineurs"
-          ],
-          difficile: [
-            "L'identité nationale est une construction sociale qui évolue avec les migrations",
-            "Le multiculturalisme enrichit la société ou la fragmente ?",
-            "La laïcité à la française est-elle compatible avec la diversité religieuse croissante ?"
-          ],
-          'tres-difficile': [
-            "Le post-colonialisme explique-t-il mieux les tensions sociales contemporaines que l'analyse de classe marxiste ?",
-            "L'intersectionnalité comme cadre théorique permet-elle une meilleure compréhension des discriminations systémiques ?",
-            "La cancel culture représente-t-elle une évolution démocratique des mouvements sociaux ou une dérive autoritaire ?"
-          ]
-        },
-        economie: {
-          facile: [
-            "Le salaire minimum devrait être augmenté",
-            "Les riches devraient payer plus d'impôts",
-            "Le travail du dimanche devrait être autorisé"
-          ],
-          moyen: [
-            "Le revenu universel devrait remplacer les minima sociaux",
-            "La dette publique française est soutenable à long terme",
-            "La concurrence fiscale entre États membres de l'UE est bénéfique"
-          ],
-          difficile: [
-            "L'économie de marché autorégulée conduit inévitablement à des crises financières récurrentes",
-            "La mondialisation néolibérale a augmenté les inégalités globales plus qu'elle ne les a réduites",
-            "La transition écologique nécessite une décroissance économique sélective"
-          ],
-          'tres-difficile': [
-            "La théorie des anticipations rationnelles de Lucas invalide-t-elle l'efficacité de la politique monétaire contra-cyclique ?",
-            "Le théorème de Coase justifie-t-il l'absence d'intervention étatique dans les externalités environnementales ?",
-            "L'économie comportementale remet-elle en cause les fondements de l'homo economicus néoclassique ?"
-          ]
-        },
-        ecologie: {
-          facile: [
-            "La voiture électrique devrait remplacer les voitures thermiques",
-            "Le nucléaire est une énergie propre",
-            "La taxe carbone devrait être augmentée"
-          ],
-          moyen: [
-            "La croissance verte est un oxymore conceptuel",
-            "L'agriculture biologique est plus écologique que l'agriculture intensive",
-            "Le développement durable justifie des sacrifices économiques immédiats"
-          ],
-          difficile: [
-            "L'anthropocène marque la fin de l'holocène et nécessite une nouvelle ère géologique",
-            "L'effondrement de la biodiversité est le défi environnemental le plus urgent",
-            "La transition énergétique nécessite une remise en cause du modèle capitaliste"
-          ],
-          'tres-difficile': [
-            "La théorie de la décroissance de Serge Latouche est-elle compatible avec les objectifs de développement durable de l'ONU ?",
-            "L'anthropocène comme concept géologique masque-t-il les responsabilités différenciées des pays développés dans le changement climatique ?",
-            "L'écoféminisme offre-t-il un cadre théorique plus pertinent que l'écologie politique traditionnelle pour penser la crise environnementale ?"
-          ]
-        },
-        culture: {
-          facile: [
-            "L'intelligence artificielle va remplacer les artistes",
-            "Les réseaux sociaux détruisent la culture",
-            "Le streaming musical nuit à la qualité artistique"
-          ],
-          moyen: [
-            "L'art contemporain est élitiste et déconnecté du public",
-            "La culture numérique enrichit ou appauvrit l'expérience artistique ?",
-            "La patrimonialisation excessive fige la culture vivante"
-          ],
-          difficile: [
-            "La démocratisation culturelle a échoué à réduire les inégalités d'accès à l'art",
-            "L'industrie culturelle capitaliste uniformise la production artistique mondiale",
-            "La notion d'auteur dans l'ère numérique remet en cause le droit d'auteur traditionnel"
-          ],
-          'tres-difficile': [
-            "La théorie de l'art pour l'art d'Oscar Wilde est-elle encore pertinente dans le contexte de l'art contemporain engagé ?",
-            "L'esthétique relationnelle de Nicolas Bourriaud révolutionne-t-elle vraiment les pratiques artistiques participatives ?",
-            "Le postmodernisme culturel marque-t-il la fin des grands récits métaphysiques ou leur perpétuation sous une autre forme ?"
-          ]
-        }
-      };
+      // Generate 3 questions
+      const questions: string[] = [];
+      for (let i = 0; i < 3; i++) {
+        console.log(`Wizard: Generating question ${i + 1}/3`);
+        const result = await debateIdeaService.generateDebateIdeaWrapped({
+          theme: state.theme!,
+          difficulty: state.difficulty,
+          playerName: state.playerName,
+          signal: undefined, // No abort signal for now
+          timeoutMs: 8000
+        });
+        questions.push(result.question);
+      }
 
-      // Get placeholder questions
-      const theme = state.theme || 'geopolitique';
-      const themeQuestions = placeholderQuestions[theme] || placeholderQuestions['geopolitique'];
-      const difficultyQuestions = themeQuestions[state.difficulty] || themeQuestions['moyen'];
-
-      // Shuffle and select 3 questions
-      const shuffled = [...difficultyQuestions].sort(() => 0.5 - Math.random());
-      const selectedQuestions = shuffled.slice(0, Math.min(3, shuffled.length));
-
-      console.log('✅ Placeholder questions generated:', selectedQuestions);
-      this.stateManager.dispatch({ type: 'SET_QUESTIONS', payload: selectedQuestions });
+      console.log('Wizard: All questions generated successfully:', questions);
+      this.stateManager.dispatch({ type: 'SET_QUESTIONS', payload: questions });
 
     } catch (error) {
-      console.error('❌ Error generating question:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue lors de la génération';
       this.stateManager.dispatch({ type: 'SET_ERROR_QUESTION', payload: errorMessage });
     } finally {

@@ -35,7 +35,7 @@ export class AudioService {
       await this.preloadSfx();
       this.isInitialized = true;
     } catch (error) {
-      console.warn('Failed to initialize audio service:', error);
+      // Ignore initialization errors
     }
   }
 
@@ -47,8 +47,7 @@ export class AudioService {
       this.bgm.preload = 'auto';
 
       // Handle loading errors gracefully
-      this.bgm.addEventListener('error', (e) => {
-        console.warn('Failed to load background music:', e);
+      this.bgm.addEventListener('error', () => {
         this.bgm = null;
       });
     }
@@ -69,7 +68,7 @@ export class AudioService {
         // Cache the audio element
         this.sfxCache.set(key, audio);
       } catch (error) {
-        console.warn(`Failed to preload SFX ${key}:`, error);
+        // Ignore preload errors
       }
     }
   }
@@ -78,8 +77,8 @@ export class AudioService {
     if (!this.bgm || !PrefsService.getAudioPrefs().musicEnabled) return;
 
     if (this.hasUserInteracted) {
-      this.bgm.play().catch(error => {
-        console.warn('Failed to play background music:', error);
+      this.bgm.play().catch(() => {
+        // Ignore play errors
       });
     }
   }
@@ -100,8 +99,8 @@ export class AudioService {
       const sfxInstance = sfx.cloneNode() as HTMLAudioElement;
       sfxInstance.volume = sfx.volume;
 
-      sfxInstance.play().catch(error => {
-        console.warn(`Failed to play SFX ${type}:`, error);
+      sfxInstance.play().catch(() => {
+        // Ignore play errors
       });
     }
   }

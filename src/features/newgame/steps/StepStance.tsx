@@ -4,6 +4,7 @@
 import { audioService } from '../../../services/audioService';
 import { phase0StateManager } from '../state';
 import { debateIdeaService } from '../../../agents/debateIdea.service';
+import { logger } from '../../../services/logger';
 import type { Stance } from '../state';
 
 export class StepStance {
@@ -14,6 +15,13 @@ export class StepStance {
   constructor() {
     this.container = this.createStep();
     this.initializeAgentCall();
+
+    // Log entering the screen
+    const state = this.stateManager.getState();
+    logger.debug('ui:phase0:question', 'enter', {
+      theme: state.theme,
+      difficulty: state.difficulty
+    });
   }
 
   private createStep(): HTMLElement {
@@ -79,7 +87,7 @@ export class StepStance {
     }
   }
 
-  private async generateQuestion(): Promise<void> {
+  private async generateQuestion(seed?: string | number): Promise<void> {
     const state = this.stateManager.getState();
 
     // Cancel any ongoing request
@@ -98,6 +106,7 @@ export class StepStance {
         theme: state.theme,
         difficulty: state.difficulty,
         playerName: state.playerName,
+        seed: seed,
         signal: this.abortController?.signal,
         timeoutMs: 8000
       });
@@ -111,7 +120,6 @@ export class StepStance {
       }
 
     } catch (error) {
-      console.error('Error generating question:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue lors de la génération';
       this.stateManager.dispatch({ type: 'SET_ERROR_QUESTION', payload: errorMessage });
     }
@@ -284,6 +292,9 @@ export class StepStance {
     button.addEventListener('click', () => {
       audioService.playSfx('click');
       this.stateManager.dispatch({ type: 'SET_STANCE', payload: stance });
+
+      // Log stance selection
+      logger.debug('ui:phase0:question', 'stance', { value: stance });
     });
 
     button.addEventListener('mouseenter', () => {
@@ -306,9 +317,9 @@ export class StepStance {
     const button = document.createElement('button');
     button.innerHTML = `
       <span style="margin-right: 0.5rem;">🎲</span>
-      Choisir aléatoirement
+      Régénérer la question
     `;
-    button.setAttribute('aria-label', 'Choisir une position aléatoire');
+    button.setAttribute('aria-label', 'Régénérer la question');
     button.style.cssText = `
       background: rgba(255, 255, 255, 0.1);
       border: 2px solid rgba(255, 255, 255, 0.2);
@@ -328,7 +339,15 @@ export class StepStance {
 
     button.addEventListener('click', () => {
       audioService.playSfx('click');
-      this.stateManager.dispatch({ type: 'RANDOMIZE_STANCE' });
+
+      // Generate a random seed for question regeneration
+      const newSeed = Math.floor(Math.random() * 1000000);
+
+      // Log reroll action
+      logger.debug('ui:phase0:question', 'reroll', { newSeed });
+
+      // Regenerate question with seed
+      this.generateQuestion(newSeed);
     });
 
     button.addEventListener('mouseenter', () => {

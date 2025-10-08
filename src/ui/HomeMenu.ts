@@ -18,7 +18,6 @@ export class HomeMenu {
   }
 
   private createHomeScreen(): HTMLElement {
-    console.log('🏗️ Creating HomeMenu screen element...');
 
     const screen = document.createElement('div');
     screen.id = 'homeMenuContent';
@@ -192,7 +191,6 @@ export class HomeMenu {
     content.appendChild(footerDiv);
     screen.appendChild(content);
 
-    console.log('✅ HomeMenu screen element created successfully');
     return screen;
   }
 
