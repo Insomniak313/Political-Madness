@@ -34,7 +34,7 @@ export class Breadcrumb {
     ];
 
     steps.forEach((step, index) => {
-      const stepElement = this.createStepElement(step, index);
+      const stepElement = this.createStepElement(step);
       breadcrumb.appendChild(stepElement);
 
       // Add separator if not the last step
@@ -47,7 +47,7 @@ export class Breadcrumb {
     return breadcrumb;
   }
 
-  private createStepElement(step: { id: number; label: string; icon: string }, index: number): HTMLElement {
+  private createStepElement(step: { id: number; label: string; icon: string }): HTMLElement {
     const stepElement = document.createElement('div');
     stepElement.className = 'breadcrumb-step';
     stepElement.setAttribute('aria-label', `Étape ${step.id}: ${step.label}`);

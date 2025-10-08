@@ -3,7 +3,7 @@ import { game } from './game-logic';
 import type { GameConfig, NotificationType } from './types';
 
 // Import new Home Menu system
-import { screenManager, Screen } from './services/screenManager';
+import { screenManager } from './services/screenManager';
 import { audioService } from './services/audioService';
 import { PrefsService } from './services/prefsService';
 import { homeMenu } from './ui/HomeMenu';
@@ -18,17 +18,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Éléments du DOM
   const splashScreen = document.getElementById('splashScreen') as HTMLElement;
   const gameScreen = document.getElementById('gameScreen') as HTMLElement;
-  const gameConfig = document.getElementById('gameConfig') as HTMLFormElement;
   const playerInput = document.getElementById('playerInput') as HTMLTextAreaElement;
   const sendResponse = document.getElementById('sendResponse') as HTMLButtonElement;
   const charCount = document.getElementById('charCount') as HTMLElement;
-  const summaryModal = document.getElementById('summaryModal') as HTMLElement;
-  const nextDuel = document.getElementById('nextDuel') as HTMLButtonElement;
-  const gameOverModal = document.getElementById('gameOverModal') as HTMLElement;
-  const playAgain = document.getElementById('playAgain') as HTMLButtonElement;
-
-  // Variables globales
-  let isWaitingForAI = false;
 
   // Initialize the new Home Menu system
   await initializeApp();
@@ -66,9 +58,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  function hideSplashScreen(): void {
-    splashScreen.classList.add('hidden');
-  }
 
   function setupScreenContainers(): void {
     try {
@@ -171,31 +160,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  function initializeEventListeners(): void {
-    gameConfig.addEventListener('submit', handleGameStart);
-    
-    sendResponse.addEventListener('click', handleSendResponse);
-    playerInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.ctrlKey) {
-        handleSendResponse();
-      }
-    });
-
-    nextDuel.addEventListener('click', hideSummaryModal);
-    playAgain.addEventListener('click', handlePlayAgain);
-
-    summaryModal.addEventListener('click', (e) => {
-      if (e.target === summaryModal) {
-        hideSummaryModal();
-      }
-    });
-
-    gameOverModal.addEventListener('click', (e) => {
-      if (e.target === gameOverModal) {
-        hideGameOverModal();
-      }
-    });
-  }
 
   function initializeCharacterCounter(): void {
     playerInput.addEventListener('input', function() {
@@ -290,48 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  async function handleSendResponse(): Promise<void> {
-    if (isWaitingForAI) {
-      showNotification('Veuillez attendre la réponse de l\'IA', 'warning');
-      return;
-    }
 
-    const response = playerInput.value.trim();
-    if (!response) {
-      showNotification('Veuillez entrer une réponse', 'warning');
-      return;
-    }
-
-    if (response.length > 500) {
-      showNotification('Votre réponse est trop longue (max 500 caractères)', 'warning');
-      return;
-    }
-
-    try {
-      isWaitingForAI = true;
-      showLoadingState();
-      
-      await game.processPlayerResponse(response);
-      
-      playerInput.value = '';
-      charCount.textContent = '0';
-      charCount.className = 'text-gray-500';
-      
-    } catch (error) {
-      console.error('Erreur lors du traitement de la réponse:', error);
-      showNotification('Erreur lors du traitement de votre réponse', 'error');
-    } finally {
-      isWaitingForAI = false;
-      hideLoadingState();
-    }
-  }
-
-  function handlePlayAgain(): void {
-    hideGameOverModal();
-    // Return to new Home Menu instead of old splash screen
-    homeMenu.show();
-    game.resetGame();
-  }
 
   function showSplashScreen(): void {
     splashScreen.classList.remove('hidden');
@@ -347,17 +270,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     sendResponse.disabled = false;
   }
 
-  function hideSummaryModal(): void {
-    summaryModal.classList.add('hidden');
-    // Réactiver le textarea après la fermeture du modal
-    playerInput.disabled = false;
-    sendResponse.disabled = false;
-    playerInput.focus();
-  }
 
-  function hideGameOverModal(): void {
-    gameOverModal.classList.add('hidden');
-  }
 
   function showLoadingState(): void {
     sendResponse.disabled = true;

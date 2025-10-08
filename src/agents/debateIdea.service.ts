@@ -140,7 +140,7 @@ export class DebateIdeaService {
         }
 
         const question = await langChainConfig.generateDebateIdea(
-          params.theme,
+          params.theme as string,
           params.difficulty
         );
 

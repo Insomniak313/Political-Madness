@@ -2,9 +2,7 @@
 // Main gamified home screen with navigation and audio controls
 
 import { screenManager, Screen } from '../services/screenManager';
-import { NewGameWizard } from '../features/newgame/NewGameWizard.tsx';
 import { audioService } from '../services/audioService';
-import { PrefsService } from '../services/prefsService';
 
 export class HomeMenu {
   private homeScreen: HTMLElement;

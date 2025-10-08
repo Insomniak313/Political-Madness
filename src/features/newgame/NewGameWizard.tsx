@@ -4,7 +4,6 @@
 import { audioService } from '../../services/audioService';
 import { PrefsService } from '../../services/prefsService';
 import { phase0StateManager, Phase0State } from './state';
-import { debateIdeaService } from '../../agents/debateIdea.service';
 
 export class NewGameWizard {
   private container: HTMLElement;
@@ -42,7 +41,7 @@ export class NewGameWizard {
     this.stateManager.setPlayerName(playerName);
 
     // Subscribe to state changes
-    this.unsubscribeState = this.stateManager.subscribe((state) => {
+    this.unsubscribeState = this.stateManager.subscribe(() => {
       this.render();
     });
 
@@ -65,7 +64,7 @@ export class NewGameWizard {
     this.container.innerHTML = '';
 
     // Create header
-    const header = this.createHeader(state);
+    const header = this.createHeader();
     this.container.appendChild(header);
 
     // Create main content area
@@ -73,7 +72,7 @@ export class NewGameWizard {
     this.container.appendChild(mainContent);
   }
 
-  private createHeader(state: Phase0State): HTMLElement {
+  private createHeader(): HTMLElement {
     const header = document.createElement('header');
     header.className = 'wizard-header';
     header.style.cssText = `
@@ -988,20 +987,6 @@ export class NewGameWizard {
     this.stateManager.dispatch({ type: 'GO_TO_PREVIOUS_STEP' });
   }
 
-  private handlePrevious(): void {
-    audioService.playSfx('click');
-    this.stateManager.dispatch({ type: 'GO_TO_PREVIOUS_STEP' });
-  }
-
-  private handleNext(): void {
-    audioService.playSfx('click');
-
-    if (this.stateManager.isLastStep()) {
-      this.handleStartGame();
-    } else {
-      this.stateManager.dispatch({ type: 'GO_TO_NEXT_STEP' });
-    }
-  }
 
   private handleStartGame(): void {
     const state = this.stateManager.getState();

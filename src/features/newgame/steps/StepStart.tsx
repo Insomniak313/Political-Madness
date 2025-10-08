@@ -104,7 +104,7 @@ export class StepStart {
           📝 Thème
         </div>
         <div style="color: white; font-size: 1.125rem; font-weight: 600;">
-          ${this.getThemeLabel(state.theme)}
+          ${this.getThemeLabel(state.theme as string)}
         </div>
       </div>
 

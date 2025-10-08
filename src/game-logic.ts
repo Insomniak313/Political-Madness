@@ -1,6 +1,6 @@
 import { langChainConfig } from './langchain-config';
 import { aiCharacterManager } from './ai-characters';
-import type { GameConfig, GameState, ThemeIdeas, Theme, OpponentType } from './types';
+import type { GameConfig, GameState, ThemeIdeas, OpponentType } from './types';
 
 // Logique principale du jeu Political Madness
 class PoliticalMadnessGame {
@@ -68,20 +68,22 @@ class PoliticalMadnessGame {
   async generateNewIdea(): Promise<void> {
     try {
       // Use predifined ideas as fallback, but prefer LangChain if available
-      const themeIdeas = this.themes[this.gameState.theme];
-      if (themeIdeas && themeIdeas.length > 0) {
-        this.gameState.currentIdea = themeIdeas[Math.floor(Math.random() * themeIdeas.length)];
-      }
+      if (this.gameState.theme) {
+        const themeIdeas = this.themes[this.gameState.theme];
+        if (themeIdeas && themeIdeas.length > 0) {
+          this.gameState.currentIdea = themeIdeas[Math.floor(Math.random() * themeIdeas.length)];
+        }
 
-      if (langChainConfig.isInitialized) {
-        try {
-          const generatedIdea = await langChainConfig.generateDebateIdea(
-            this.gameState.theme,
-            this.gameState.difficulty
-          );
-          this.gameState.currentIdea = generatedIdea;
-        } catch (error) {
-          console.warn('Erreur LangChain, utilisation de l\'idée prédéfinie:', error);
+        if (langChainConfig.isInitialized) {
+          try {
+            const generatedIdea = await langChainConfig.generateDebateIdea(
+              this.gameState.theme,
+              this.gameState.difficulty
+            );
+            this.gameState.currentIdea = generatedIdea;
+          } catch (error) {
+            console.warn('Erreur LangChain, utilisation de l\'idée prédéfinie:', error);
+          }
         }
       }
     } catch (error) {
@@ -244,7 +246,7 @@ class PoliticalMadnessGame {
 
   private updateUI(): void {
     const currentThemeElement = document.getElementById('currentTheme');
-    if (currentThemeElement) {
+    if (currentThemeElement && this.gameState.theme) {
       currentThemeElement.textContent = this.gameState.theme.charAt(0).toUpperCase() + this.gameState.theme.slice(1);
     }
     

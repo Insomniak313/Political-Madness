@@ -67,7 +67,8 @@ class LangChainConfig {
     const difficultyPrompts: Record<Difficulty, string> = {
       facile: "Créez une idée clivante simple et accessible sur le thème",
       moyen: "Créez une idée clivante modérée sur le thème",
-      difficile: "Créez une idée clivante complexe et nuancée sur le thème"
+      difficile: "Créez une idée clivante complexe et nuancée sur le thème",
+      'tres-difficile': "Créez une idée clivante extrêmement complexe et sophistiquée sur le thème"
     };
 
     const prompt = `

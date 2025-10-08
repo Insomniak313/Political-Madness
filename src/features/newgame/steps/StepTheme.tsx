@@ -119,7 +119,7 @@ export class StepTheme {
     const card = document.createElement('button');
     card.className = 'theme-card';
     card.setAttribute('aria-label', `Sélectionner le thème ${theme.label}`);
-    card.setAttribute('data-theme', theme.key);
+    card.setAttribute('data-theme', theme.key as string);
 
     const isSelected = this.stateManager.getState().theme === theme.key;
 
