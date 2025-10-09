@@ -8,11 +8,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html')
-      },
-      output: {
-        manualChunks: {
-          'google-ai': ['@google/generative-ai']
-        }
       }
     },
     target: 'es2020',
@@ -21,10 +16,15 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: true
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8787',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   },
-  optimizeDeps: {
-    include: ['@google/generative-ai']
-  }
+  optimizeDeps: {}
 });
 
