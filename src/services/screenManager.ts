@@ -45,6 +45,11 @@ export class ScreenManager {
     if (targetScreen) {
       targetScreen.classList.remove('hidden');
       this.currentScreen = screen;
+
+      // Dispatch screen change event
+      document.dispatchEvent(new CustomEvent('screen-changed', {
+        detail: { screen: screen }
+      }));
     }
   }
 

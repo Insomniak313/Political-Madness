@@ -102,16 +102,24 @@ export class StepStance {
     this.stateManager.dispatch({ type: 'SET_ERROR_QUESTION', payload: null });
 
     try {
-      const result = await debateIdeaService.generateDebateIdeaWrapped({
-        theme: state.theme,
+      // Generate topics using the new method
+      const context = `Débat télévisé extrêmement tendu entre deux orateurs aux positions idéologiques opposées et radicales.
+Le ton est vif, les punchlines fusent, chaque camp tente de polariser l'opinion.
+Les sujets doivent être formulés de manière neutre et concise, tout en étant intrinsèquement clivants.`;
+
+      const result = await debateIdeaService.generateDebateTopicsWrapped({
+        language: 'français',
         difficulty: state.difficulty,
-        playerName: state.playerName,
+        theme: state.theme,
+        context,
         seed: seed,
         signal: this.abortController?.signal,
         timeoutMs: 8000
       });
 
-      this.stateManager.dispatch({ type: 'SET_QUESTION', payload: result.question });
+      // Pick a random topic from the generated topics
+      const randomTopic = result.sujets[Math.floor(Math.random() * result.sujets.length)];
+      this.stateManager.dispatch({ type: 'SET_QUESTION', payload: randomTopic });
 
       // If stance is null, randomly assign one
       if (!state.stance) {

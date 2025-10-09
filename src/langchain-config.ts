@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AICharacter, Difficulty, Exchange, Position } from './types';
+import { AICharacter, Exchange, Position } from './types';
 
 interface GenerativeModel {
   generateContent(prompt: string): Promise<{ response: { text: () => string } }>;
@@ -60,28 +60,6 @@ class LangChainConfig {
     }
   }
 
-  async generateDebateIdea(theme: string, difficulty: Difficulty): Promise<string> {
-    const difficultyPrompts: Record<Difficulty, string> = {
-      facile: "Créez une idée clivante simple et accessible sur le thème",
-      moyen: "Créez une idée clivante modérée sur le thème",
-      difficile: "Créez une idée clivante complexe et nuancée sur le thème",
-      'tres-difficile': "Créez une idée clivante extrêmement complexe et sophistiquée sur le thème"
-    };
-
-    const prompt = `
-    En tant que journaliste politique, ${difficultyPrompts[difficulty]} "${theme}".
-    
-    L'idée doit être :
-    - Clivante et controversée
-    - Propice au débat
-    - Formulée comme une déclaration claire
-    - Adaptée au niveau ${difficulty}
-    
-    Répondez uniquement avec l'idée clivante, sans explication supplémentaire.
-    `;
-
-    return await this.generateResponse(prompt);
-  }
 
   async generateAIResponse(
     character: AICharacter,

@@ -1,11 +1,11 @@
 import { langChainConfig } from './langchain-config';
 import { aiCharacterManager } from './ai-characters';
-import type { GameConfig, GameState, ThemeIdeas, OpponentType } from './types';
+import { debateIdeaService } from './agents/debateIdea.service';
+import type { GameConfig, GameState, OpponentType } from './types';
 
 // Logique principale du jeu Political Madness
 class PoliticalMadnessGame {
   public gameState: GameState;
-  private themes: ThemeIdeas;
 
   constructor() {
     this.gameState = {
@@ -24,34 +24,6 @@ class PoliticalMadnessGame {
       isGameActive: false,
       currentAICharacter: null
     };
-    
-    this.themes = {
-      geopolitique: [
-        "L'OTAN devrait se dissoudre pour laisser place à une défense européenne autonome",
-        "Les sanctions économiques contre la Russie devraient être levées immédiatement",
-        "L'Union Européenne devrait accueillir la Turquie comme membre à part entière"
-      ],
-      societe: [
-        "La PMA devrait être interdite",
-        "Le port du voile devrait être interdit dans l'espace public",
-        "L'immigration devrait être drastiquement réduite"
-      ],
-      economie: [
-        "Le revenu universel devrait être instauré",
-        "Les entreprises privées devraient être nationalisées",
-        "L'impôt sur le revenu devrait être supprimé"
-      ],
-      ecologie: [
-        "La voiture individuelle devrait être interdite en ville",
-        "La viande devrait être taxée comme un produit de luxe",
-        "Les vols en avion devraient être limités à 2 par personne et par an"
-      ],
-      culture: [
-        "Les réseaux sociaux devraient être interdits aux mineurs",
-        "L'intelligence artificielle devrait remplacer les artistes humains",
-        "Les langues régionales devraient être obligatoires à l'école"
-      ]
-    };
   }
 
   async initializeGame(config: GameConfig): Promise<void> {
@@ -67,27 +39,25 @@ class PoliticalMadnessGame {
 
   async generateNewIdea(): Promise<void> {
     try {
-      // Use predifined ideas as fallback, but prefer LangChain if available
       if (this.gameState.theme) {
-        const themeIdeas = this.themes[this.gameState.theme];
-        if (themeIdeas && themeIdeas.length > 0) {
-          this.gameState.currentIdea = themeIdeas[Math.floor(Math.random() * themeIdeas.length)];
-        }
+        // Generate topics using the new method
+        const context = `Débat télévisé extrêmement tendu entre deux orateurs aux positions idéologiques opposées et radicales.
+Le ton est vif, les punchlines fusent, chaque camp tente de polariser l'opinion.
+Les sujets doivent être formulés de manière neutre et concise, tout en étant intrinsèquement clivants.`;
 
-        if (langChainConfig.isInitialized) {
-          try {
-            const generatedIdea = await langChainConfig.generateDebateIdea(
-              this.gameState.theme,
-              this.gameState.difficulty
-            );
-            this.gameState.currentIdea = generatedIdea;
-          } catch (error) {
-            // Ignore LangChain errors, use fallback
-          }
-        }
+        const result = await debateIdeaService.generateDebateTopicsWrapped({
+          language: 'français',
+          difficulty: this.gameState.difficulty,
+          theme: this.gameState.theme,
+          context,
+          timeoutMs: 8000
+        });
+
+        // Pick a random topic from the generated topics
+        this.gameState.currentIdea = result.sujets[Math.floor(Math.random() * result.sujets.length)];
       }
     } catch (error) {
-      // Ignore generation errors
+      // Ignore generation errors - game can continue without new ideas
     }
   }
 
@@ -243,25 +213,9 @@ class PoliticalMadnessGame {
   }
 
   private updateUI(): void {
-    const currentThemeElement = document.getElementById('currentTheme');
-    if (currentThemeElement && this.gameState.theme) {
-      currentThemeElement.textContent = this.gameState.theme.charAt(0).toUpperCase() + this.gameState.theme.slice(1);
-    }
-    
-    const playerPositionElement = document.getElementById('playerPosition');
-    if (playerPositionElement) {
-      playerPositionElement.textContent = `Position : ${this.gameState.playerPosition}`;
-    }
-    
-    const currentDuelElement = document.getElementById('currentDuel');
-    if (currentDuelElement) {
-      currentDuelElement.textContent = this.gameState.currentDuel.toString();
-    }
-    
-    const currentExchangeElement = document.getElementById('currentExchange');
-    if (currentExchangeElement) {
-      currentExchangeElement.textContent = this.gameState.currentExchange.toString();
-    }
+    // UI updates are now handled by the unified header
+    // Dispatch event to update header with current game state
+    document.dispatchEvent(new CustomEvent('game-state-changed'));
     
     const journalistStatementElement = document.getElementById('journalistStatement');
     if (journalistStatementElement) {

@@ -8,6 +8,7 @@ import { audioService } from './services/audioService';
 import { PrefsService } from './services/prefsService';
 import { homeMenu } from './ui/HomeMenu';
 import { optionsScreen } from './ui/OptionsScreen';
+import { unifiedHeader } from './ui/GlobalHeader';
 import { NewGameWizard } from './features/newgame/NewGameWizard.tsx';
 
 // Clé API fixe
@@ -114,6 +115,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         // newGameScreen container not found
       }
+
+      // Inject Unified Header
+      const unifiedHeaderElement = unifiedHeader.getElement();
+      document.body.appendChild(unifiedHeaderElement);
+
     } catch (error) {
       // Error setting up screen containers
     }

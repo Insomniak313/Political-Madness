@@ -5,114 +5,25 @@ import { langChainConfig } from '../langchain-config';
 import { logger } from '../services/logger';
 import type { Difficulty, Theme } from '../types';
 
-export interface DebateIdeaParams {
+
+export interface DebateTopicsParams {
+  language: string;
+  difficulty: Difficulty;
   theme: Theme;
-  difficulty?: Difficulty;
-  playerName?: string;
+  context: string;
   seed?: string | number;
   signal?: AbortSignal;
   timeoutMs?: number;
 }
 
-export interface DebateIdeaResult {
-  question: string;
+export interface DebateTopicsResult {
+  sujets: string[];
 }
 
 export class DebateIdeaService {
   private static readonly DEFAULT_TIMEOUT = 8000; // 8 seconds
   private static readonly MAX_RETRIES = 1;
 
-  /**
-   * Generate a debate idea with enhanced error handling and validation
-   */
-  static async generateDebateIdeaWrapped(params: DebateIdeaParams): Promise<DebateIdeaResult> {
-    const {
-      theme,
-      difficulty = 'moyen',
-      playerName,
-      seed,
-      signal,
-      timeoutMs = this.DEFAULT_TIMEOUT
-    } = params;
-
-    const startTime = Date.now();
-
-    // Log request
-    logger.info('agent:question', 'request', {
-      theme,
-      difficulty,
-      playerName: playerName ? '[REDACTED]' : undefined,
-      seed,
-      timeoutMs
-    });
-
-    // Create abort controller for timeout if not provided
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-    // Combine user signal with timeout signal
-    const combinedSignal = signal
-      ? this.createCombinedSignal(signal, controller.signal)
-      : controller.signal;
-
-    try {
-      // Validate inputs
-      this.validateParams({ theme, difficulty, playerName });
-
-      // Generate the idea
-      const question = await this.callAgentWithRetry({
-        theme,
-        difficulty,
-        playerName,
-        seed,
-        signal: combinedSignal
-      });
-
-      // Validate and clean the result
-      const cleanedQuestion = this.validateAndCleanQuestion(question);
-
-      // Log success
-      const duration = Date.now() - startTime;
-      logger.info('agent:question', 'success', {
-        ms: duration,
-        questionPreview: cleanedQuestion.substring(0, 50) + (cleanedQuestion.length > 50 ? '...' : '')
-      });
-
-      return { question: cleanedQuestion };
-
-    } catch (error) {
-      // Log failure
-      const duration = Date.now() - startTime;
-      const errType = error instanceof Error ? (error.name === 'AbortError' ? 'timeout' : 'error') : 'unknown';
-      const message = error instanceof Error ? error.message : String(error);
-
-      logger.error('agent:question', 'failure', {
-        ms: duration,
-        errType,
-        message
-      });
-
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          throw new Error('La génération de l\'idée a pris trop de temps. Veuillez réessayer.');
-        }
-        if (error.message.includes('API_KEY_INVALID')) {
-          throw new Error('Clé API invalide. Vérifiez la configuration.');
-        }
-        if (error.message.includes('QUOTA_EXCEEDED')) {
-          throw new Error('Quota API dépassé. Réessayez plus tard.');
-        }
-        if (error.message.includes('NETWORK_ERROR')) {
-          throw new Error('Erreur de réseau. Vérifiez votre connexion.');
-        }
-      }
-
-      // Re-throw the original error if it's already formatted
-      throw error;
-    } finally {
-      clearTimeout(timeoutId);
-    }
-  }
 
   /**
    * Create a combined abort signal from multiple sources
@@ -132,10 +43,15 @@ export class DebateIdeaService {
     return controller.signal;
   }
 
+
   /**
-   * Validate input parameters
+   * Validate input parameters for topics generation
    */
-  private static validateParams(params: { theme: Theme; difficulty: Difficulty; playerName?: string }): void {
+  private static validateTopicsParams(params: { language: string; difficulty: Difficulty; theme: Theme }): void {
+    if (!params.language || params.language !== 'français') {
+      throw new Error('La langue doit être "français"');
+    }
+
     if (!params.theme) {
       throw new Error('Le thème est obligatoire');
     }
@@ -144,19 +60,17 @@ export class DebateIdeaService {
     if (!validDifficulties.includes(params.difficulty)) {
       throw new Error(`Difficulté invalide: ${params.difficulty}`);
     }
-
-    if (params.playerName && params.playerName.length > 50) {
-      throw new Error('Le nom du joueur ne peut pas dépasser 50 caractères');
-    }
   }
 
+
   /**
-   * Call the agent with retry logic
+   * Call the DebatePicker agent with retry logic for topic generation (wizard)
    */
-  private static async callAgentWithRetry(params: {
-    theme: Theme;
+  private static async callTopicsAgentWithRetry(params: {
+    language: string;
     difficulty: Difficulty;
-    playerName?: string;
+    theme: Theme;
+    context: string;
     seed?: string | number;
     signal?: AbortSignal;
   }): Promise<string> {
@@ -169,12 +83,50 @@ export class DebateIdeaService {
           throw new Error('Opération annulée');
         }
 
-        const question = await langChainConfig.generateDebateIdea(
-          params.theme as string,
-          params.difficulty
-        );
+        const prompt = `
+Tu es DebatePicker, un agent IA chargé de créer trois questions de débat formulées pour être répondue par “pour” ou “contre”.
+Tu dois parler comme si tu préparais un jeu télé grand public.
 
-        return question;
+- langue = ${params.language}
+- thème = ${params.theme}
+- difficulté = ${params.difficulty}
+- contexte = ${params.context}
+
+🎯 Mission :
+À partir des informations suivantes :
+- langue = ${params.language}
+- thème = ${params.theme}
+- difficulté = ${params.difficulty}
+- contexte = ${params.context}
+
+Génère **exactement trois questions de débat** en une seule phrase chacune.
+
+⚙️ Structure de créativité :
+1️⃣ **Accessible et simple** — question réaliste et sérieuse, compréhensible par tout le monde.  
+2️⃣ **Inattendu et provocatrice** — question inattendu, crédible et provocatrice. Des questions légèrement dystopiques mais qui sont tout à fait possible
+3️⃣ **Absurde et drôle** — question humoristique, mais plausible. Elle doit être légèrement absurde.
+
+🧠 Règles :
+- Chaque question doit pouvoir être répondue par “pour” ou “contre”.  
+- Évite les termes trop techniques, politiques ou juridiques.  
+- Utilise un langage du quotidien, clair, direct, amusant.  
+- Pas de texte explicatif, pas de numérotation, pas de commentaire.  
+- Le 3e sujet doit faire sourire, surprendre, voire être absurde, mais rester grammaticalement correct.
+
+📦 **FORMAT DE SORTIE UNIQUE ET STRICT :**
+Réponds uniquement avec ce JSON valide :
+{
+  "sujets": [
+    "question1",
+    "question2",
+    "question3"
+  ]
+}
+        `;
+
+        const response = await langChainConfig.generateResponse(prompt);
+
+        return response;
 
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
@@ -185,7 +137,7 @@ export class DebateIdeaService {
         }
 
         // Log retry attempt
-        logger.warn('agent:question', 'retry', {
+        logger.warn('agent:topics', 'retry', {
           attempt: attempt + 1,
           error: lastError.message
         });
@@ -202,40 +154,148 @@ export class DebateIdeaService {
   }
 
   /**
-   * Validate and clean the generated question
+   * Parse and validate the topics JSON response
    */
-  private static validateAndCleanQuestion(question: string): string {
-    if (!question || typeof question !== 'string') {
-      throw new Error('La question générée n\'est pas valide');
-    }
+  private static parseAndValidateTopicsJson(jsonString: string): DebateTopicsResult {
+    try {
+      // Extract JSON from the response if there's extra text
+      let jsonToParse = jsonString.trim();
 
-    // Clean up the question
-    let cleaned = question.trim();
-
-    // Remove extra quotes at start/end
-    cleaned = cleaned.replace(/^["']|["']$/g, '');
-
-    // Ensure it's not too long (max 200 characters for UI)
-    if (cleaned.length > 200) {
-      // Try to cut at a sentence boundary
-      const sentences = cleaned.split(/[.!?]+/);
-      cleaned = sentences[0];
-      if (cleaned.length > 200) {
-        cleaned = cleaned.substring(0, 197) + '...';
+      // Try to find JSON object in the response
+      const jsonMatch = jsonToParse.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        jsonToParse = jsonMatch[0];
       }
-    }
 
-    // Ensure it's not too short
-    if (cleaned.length < 10) {
-      throw new Error('La question générée est trop courte');
-    }
+      const parsed = JSON.parse(jsonToParse);
 
-    // Ensure it ends with proper punctuation
-    if (!cleaned.match(/[.!?]$/)) {
-      cleaned += '.';
-    }
+      if (!parsed || typeof parsed !== 'object') {
+        throw new Error('La réponse n\'est pas un objet JSON valide');
+      }
 
-    return cleaned;
+      if (!parsed.sujets || !Array.isArray(parsed.sujets)) {
+        throw new Error('La clé "sujets" est manquante ou n\'est pas un tableau');
+      }
+
+      if (parsed.sujets.length !== 3) {
+        throw new Error(`Le nombre de sujets doit être exactement 3, reçu: ${parsed.sujets.length}`);
+      }
+
+      // Validate each topic
+      for (let i = 0; i < parsed.sujets.length; i++) {
+        const topic = parsed.sujets[i];
+        if (typeof topic !== 'string' || topic.trim().length === 0) {
+          throw new Error(`Le sujet ${i + 1} n'est pas une chaîne valide`);
+        }
+        if (topic.length > 200) {
+          throw new Error(`Le sujet ${i + 1} est trop long (max 200 caractères)`);
+        }
+      }
+
+      return {
+        sujets: parsed.sujets.map((s: string) => s.trim())
+      };
+
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        throw new Error('La réponse JSON n\'est pas valide');
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Generate debate topics with enhanced error handling and validation
+   */
+  static async generateDebateTopicsWrapped(params: DebateTopicsParams): Promise<DebateTopicsResult> {
+    const {
+      language,
+      difficulty,
+      theme,
+      context,
+      seed,
+      signal,
+      timeoutMs = this.DEFAULT_TIMEOUT
+    } = params;
+
+    const startTime = Date.now();
+
+    // Log request
+    logger.info('agent:topics', 'request', {
+      language,
+      difficulty,
+      theme,
+      seed,
+      timeoutMs
+    });
+
+    // Create abort controller for timeout if not provided
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    // Combine user signal with timeout signal
+    const combinedSignal = signal
+      ? this.createCombinedSignal(signal, controller.signal)
+      : controller.signal;
+
+    try {
+      // Validate inputs
+      this.validateTopicsParams({ language, difficulty, theme });
+
+      // Generate the topics
+      const topicsJson = await this.callTopicsAgentWithRetry({
+        language,
+        difficulty,
+        theme,
+        context,
+        seed,
+        signal: combinedSignal
+      });
+
+      // Parse and validate the result
+      const parsedResult = this.parseAndValidateTopicsJson(topicsJson);
+
+      // Log success
+      const duration = Date.now() - startTime;
+      logger.info('agent:topics', 'success', {
+        ms: duration,
+        topicsCount: parsedResult.sujets.length
+      });
+
+      return parsedResult;
+
+    } catch (error) {
+      // Log failure
+      const duration = Date.now() - startTime;
+      const errType = error instanceof Error ? (error.name === 'AbortError' ? 'timeout' : 'error') : 'unknown';
+      const message = error instanceof Error ? error.message : String(error);
+
+      logger.error('agent:topics', 'failure', {
+        ms: duration,
+        errType,
+        message
+      });
+
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('La génération des sujets a pris trop de temps. Veuillez réessayer.');
+        }
+        if (error.message.includes('API_KEY_INVALID')) {
+          throw new Error('Clé API invalide. Vérifiez la configuration.');
+        }
+        if (error.message.includes('QUOTA_EXCEEDED')) {
+          throw new Error('Quota API dépassé. Réessayez plus tard.');
+        }
+        if (error.message.includes('NETWORK_ERROR')) {
+          throw new Error('Erreur de réseau. Vérifiez votre connexion.');
+        }
+      }
+
+      // Re-throw the original error if it's already formatted
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   /**

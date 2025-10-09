@@ -53,10 +53,6 @@ export interface GenerationConfig {
   maxOutputTokens: number;
 }
 
-export interface ThemeIdeas {
-  [key: string]: string[];
-}
-
 export type Difficulty = 'facile' | 'moyen' | 'difficile' | 'tres-difficile';
 export type Theme = 'geopolitique' | 'societe' | 'economie' | 'ecologie' | 'culture' | null;
 export type Position = 'pour' | 'contre';

@@ -11,6 +11,8 @@ export class NewGameWizard {
   private stateManager = phase0StateManager;
   private unsubscribeState: (() => void) | null = null;
   private isGeneratingQuestion = false; // Flag to prevent duplicate calls
+  private isRendering = false; // Flag to prevent recursive renders
+  private abortController: AbortController | null = null; // For cancelling ongoing requests
 
   constructor() {
     this.container = this.createContainer();
@@ -60,7 +62,11 @@ export class NewGameWizard {
   }
 
   private render(): void {
-    const state = this.stateManager.getState();
+    if (this.isRendering) {
+      return;
+    }
+
+    this.isRendering = true;
 
     this.container.innerHTML = '';
 
@@ -69,8 +75,10 @@ export class NewGameWizard {
     this.container.appendChild(header);
 
     // Create main content area
-    const mainContent = this.createMainContent(state);
+    const mainContent = this.createMainContent(this.stateManager.getState());
     this.container.appendChild(mainContent);
+
+    this.isRendering = false;
   }
 
   private createHeader(): HTMLElement {
@@ -970,6 +978,8 @@ export class NewGameWizard {
 
   private handleQuit(): void {
     audioService.playSfx('click');
+    // Cancel any ongoing request
+    this.cancelOngoingRequest();
     // Reset wizard state before quitting
     this.stateManager.dispatch({ type: 'RESET_WIZARD' });
     // Navigate back to home
@@ -979,6 +989,8 @@ export class NewGameWizard {
 
   private handleBack(): void {
     audioService.playSfx('click');
+    // Cancel any ongoing request when navigating
+    this.cancelOngoingRequest();
     this.stateManager.dispatch({ type: 'GO_TO_PREVIOUS_STEP' });
   }
 
@@ -1002,39 +1014,62 @@ export class NewGameWizard {
     document.dispatchEvent(startGameEvent);
   }
 
+  private cancelOngoingRequest(): void {
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
+  }
+
   private async generateQuestion(): Promise<void> {
     // Prevent duplicate calls
     if (this.isGeneratingQuestion) {
       return;
     }
 
+    // Cancel any ongoing request
+    this.cancelOngoingRequest();
+
     const state = this.stateManager.getState();
 
     this.isGeneratingQuestion = true;
+    this.abortController = new AbortController();
     this.stateManager.dispatch({ type: 'SET_LOADING_QUESTION', payload: true });
     this.stateManager.dispatch({ type: 'SET_ERROR_QUESTION', payload: null });
 
     try {
-      // Generate 3 questions
-      const questions: string[] = [];
-      for (let i = 0; i < 3; i++) {
-        const result = await debateIdeaService.generateDebateIdeaWrapped({
-          theme: state.theme!,
-          difficulty: state.difficulty,
-          playerName: state.playerName,
-          signal: undefined, // No abort signal for now
-          timeoutMs: 8000
-        });
-        questions.push(result.question);
+      // Generate topics using the new AI agent
+      const context = `Débat télévisé extrêmement tendu entre deux orateurs aux positions idéologiques opposées et radicales.
+Le ton est vif, les punchlines fusent, chaque camp tente de polariser l'opinion.
+Les sujets doivent être formulés de manière neutre et concise, tout en étant intrinsèquement clivants.`;
+
+      const result = await debateIdeaService.generateDebateTopicsWrapped({
+        language: 'français',
+        difficulty: state.difficulty,
+        theme: state.theme!,
+        context,
+        signal: this.abortController.signal,
+        timeoutMs: 8000
+      });
+
+      // Check if request was cancelled
+      if (this.abortController.signal.aborted) {
+        return;
       }
 
-      this.stateManager.dispatch({ type: 'SET_QUESTIONS', payload: questions });
+      this.stateManager.dispatch({ type: 'SET_QUESTIONS', payload: result.sujets });
 
     } catch (error) {
+      // Don't show error if request was cancelled
+      if (this.abortController?.signal.aborted) {
+        return;
+      }
+
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue lors de la génération';
       this.stateManager.dispatch({ type: 'SET_ERROR_QUESTION', payload: errorMessage });
     } finally {
       this.isGeneratingQuestion = false;
+      this.abortController = null;
     }
   }
 }

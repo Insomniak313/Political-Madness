@@ -8,8 +8,6 @@ export class HomeMenu {
   private homeScreen: HTMLElement;
   private newGameButton!: HTMLButtonElement;
   private optionsButton!: HTMLButtonElement;
-  private musicToggle!: HTMLButtonElement;
-  private sfxToggle!: HTMLButtonElement;
 
   constructor() {
     this.homeScreen = this.createHomeScreen();
@@ -122,55 +120,13 @@ export class HomeMenu {
     buttonsDiv.appendChild(newGameButton);
     buttonsDiv.appendChild(optionsButton);
 
-    // Footer
+    // Footer with version
     const footerDiv = document.createElement('div');
     footerDiv.style.cssText = `
       margin-top: 2rem;
       padding-top: 2rem;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
-    `;
-
-    const footerControls = document.createElement('div');
-    footerControls.style.cssText = `
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-    `;
-
-    // Audio toggles
-    const musicToggle = document.createElement('button');
-    musicToggle.id = 'musicToggle';
-    musicToggle.innerHTML = '<i class="fas fa-music"></i>';
-    musicToggle.setAttribute('aria-label', 'Basculer la musique');
-    musicToggle.style.cssText = `
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: white;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    `;
-
-    const sfxToggle = document.createElement('button');
-    sfxToggle.id = 'sfxToggle';
-    sfxToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
-    sfxToggle.setAttribute('aria-label', 'Basculer les effets sonores');
-    sfxToggle.style.cssText = `
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: white;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      text-align: center;
     `;
 
     const version = document.createElement('span');
@@ -180,10 +136,7 @@ export class HomeMenu {
       font-size: 0.875rem;
     `;
 
-    footerControls.appendChild(musicToggle);
-    footerControls.appendChild(sfxToggle);
-    footerControls.appendChild(version);
-    footerDiv.appendChild(footerControls);
+    footerDiv.appendChild(version);
 
     // Assemble everything
     content.appendChild(brandDiv);
@@ -197,8 +150,6 @@ export class HomeMenu {
   private initializeElements(): void {
     this.newGameButton = this.homeScreen.querySelector('#newGameButton') as HTMLButtonElement;
     this.optionsButton = this.homeScreen.querySelector('#optionsButton') as HTMLButtonElement;
-    this.musicToggle = this.homeScreen.querySelector('#musicToggle') as HTMLButtonElement;
-    this.sfxToggle = this.homeScreen.querySelector('#sfxToggle') as HTMLButtonElement;
   }
 
   private attachEventListeners(): void {
@@ -221,25 +172,6 @@ export class HomeMenu {
     this.optionsButton.addEventListener('mouseenter', () => {
       audioService.playSfx('hover');
     });
-
-    // Audio Toggles
-    this.musicToggle.addEventListener('click', () => {
-      audioService.playSfx('click');
-      this.toggleMusic();
-    });
-
-    this.musicToggle.addEventListener('mouseenter', () => {
-      audioService.playSfx('hover');
-    });
-
-    this.sfxToggle.addEventListener('click', () => {
-      audioService.playSfx('click');
-      this.toggleSfx();
-    });
-
-    this.sfxToggle.addEventListener('mouseenter', () => {
-      audioService.playSfx('hover');
-    });
   }
 
   private handleNewGame(): void {
@@ -250,32 +182,6 @@ export class HomeMenu {
   private handleOptions(): void {
     // Navigate to options screen
     screenManager.showScreen(Screen.OPTIONS);
-  }
-
-  private toggleMusic(): void {
-    const isEnabled = audioService.getMusicEnabled();
-    audioService.setMusicEnabled(!isEnabled);
-    this.updateMusicToggleIcon();
-  }
-
-  private toggleSfx(): void {
-    const isEnabled = audioService.getSfxEnabled();
-    audioService.setSfxEnabled(!isEnabled);
-    this.updateSfxToggleIcon();
-  }
-
-  private updateMusicToggleIcon(): void {
-    const icon = this.musicToggle.querySelector('i');
-    if (icon) {
-      icon.className = `fas ${audioService.getMusicEnabled() ? 'fa-music' : 'fa-music-slash'}`;
-    }
-  }
-
-  private updateSfxToggleIcon(): void {
-    const icon = this.sfxToggle.querySelector('i');
-    if (icon) {
-      icon.className = `fas ${audioService.getSfxEnabled() ? 'fa-volume-up' : 'fa-volume-mute'}`;
-    }
   }
 
   // Public method to show the home menu

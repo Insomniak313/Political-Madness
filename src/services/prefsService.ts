@@ -4,6 +4,9 @@
 export interface AudioPrefs {
   musicEnabled: boolean;
   sfxEnabled: boolean;
+  musicVolume: number;
+  sfxVolume: number;
+  musicTrackIndex: number;
 }
 
 const STORAGE_KEYS = {
@@ -13,7 +16,10 @@ const STORAGE_KEYS = {
 
 const DEFAULT_AUDIO_PREFS: AudioPrefs = {
   musicEnabled: true,
-  sfxEnabled: true
+  sfxEnabled: true,
+  musicVolume: 0.4,
+  sfxVolume: 0.6,
+  musicTrackIndex: -1 // -1 means random
 };
 
 export class PrefsService {
@@ -62,7 +68,10 @@ export class PrefsService {
       // Validate the prefs object
       const validatedPrefs: AudioPrefs = {
         musicEnabled: Boolean(prefs.musicEnabled),
-        sfxEnabled: Boolean(prefs.sfxEnabled)
+        sfxEnabled: Boolean(prefs.sfxEnabled),
+        musicVolume: Math.max(0, Math.min(1, prefs.musicVolume || 0.4)),
+        sfxVolume: Math.max(0, Math.min(1, prefs.sfxVolume || 0.6)),
+        musicTrackIndex: Math.max(-1, Math.floor(prefs.musicTrackIndex || -1))
       };
       localStorage.setItem(STORAGE_KEYS.AUDIO_PREFS, JSON.stringify(validatedPrefs));
     } catch (error) {
@@ -78,6 +87,33 @@ export class PrefsService {
   static setSfxEnabled(enabled: boolean): void {
     const currentPrefs = this.getAudioPrefs();
     this.setAudioPrefs({ ...currentPrefs, sfxEnabled: enabled });
+  }
+
+  static getMusicVolume(): number {
+    return this.getAudioPrefs().musicVolume;
+  }
+
+  static setMusicVolume(volume: number): void {
+    const currentPrefs = this.getAudioPrefs();
+    this.setAudioPrefs({ ...currentPrefs, musicVolume: volume });
+  }
+
+  static getSfxVolume(): number {
+    return this.getAudioPrefs().sfxVolume;
+  }
+
+  static setSfxVolume(volume: number): void {
+    const currentPrefs = this.getAudioPrefs();
+    this.setAudioPrefs({ ...currentPrefs, sfxVolume: volume });
+  }
+
+  static getMusicTrackIndex(): number {
+    return this.getAudioPrefs().musicTrackIndex;
+  }
+
+  static setMusicTrackIndex(index: number): void {
+    const currentPrefs = this.getAudioPrefs();
+    this.setAudioPrefs({ ...currentPrefs, musicTrackIndex: index });
   }
 
   // Utility method to clear all preferences (useful for testing)
