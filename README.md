@@ -1,6 +1,6 @@
 # 🗳️ Political Madness
 
-Un jeu de débat politique interactif où vous affrontez une IA sur des sujets clivants. Développé avec TypeScript, Vite et l'API Google Generative AI (Gemini).
+Un jeu de débat politique interactif où vous affrontez une IA sur des sujets clivants. Développé avec TypeScript, Vite et l'API OpenAI.
 
 [![Deploy Status](https://github.com/your-username/political-madness/actions/workflows/deploy.yml/badge.svg)](https://github.com/your-username/political-madness/actions/workflows/deploy.yml)
 [![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-blue?style=for-the-badge)](https://insomniak313.github.io/Political-Madness/)
@@ -25,13 +25,13 @@ Un jeu de débat politique interactif où vous affrontez une IA sur des sujets c
 - **TypeScript** : Typage statique pour une meilleure maintenabilité
 - **Vite** : Build tool moderne et rapide
 - **Tailwind CSS** : Framework CSS utilitaire
-- **Google Generative AI** : API Gemini pour les réponses intelligentes de l'IA
+- **OpenAI** : API Chat Completions pour les réponses intelligentes de l'IA
 - **Font Awesome** : Icônes
 
 ## 📋 Prérequis
 
 - Node.js 18+ et npm/yarn
-- Une connexion internet (pour l'API Google Generative AI)
+- Une connexion internet (pour l'API OpenAI)
 
 ## 🔧 Installation
 
@@ -92,7 +92,7 @@ Political-Madness/
 │   │   └── index.ts          # Types et interfaces TypeScript
 │   ├── ai-characters.ts      # Gestion des personnages IA
 │   ├── game-logic.ts         # Logique du jeu
-│   ├── langchain-config.ts   # Configuration de l'API Gemini
+│   ├── langchain-config.ts   # Client front qui appelle l'API backend
 │   ├── main.ts              # Point d'entrée principal
 │   └── styles.css           # Styles personnalisés
 ├── index.html               # Page HTML principale
@@ -181,4 +181,4 @@ Ce projet est actuellement privé. Pour toute suggestion ou rapport de bug, cont
 - [Documentation Vite](https://vitejs.dev/)
 - [Documentation TypeScript](https://www.typescriptlang.org/)
 - [Documentation Tailwind CSS](https://tailwindcss.com/)
-- [Google Generative AI](https://ai.google.dev/)
+- [OpenAI API](https://platform.openai.com/docs)
