@@ -2,9 +2,6 @@ import { langChainConfig } from './langchain-config';
 import { game } from './game-logic';
 import type { GameConfig, NotificationType } from './types';
 
-// Clé API fixe
-const FIXED_API_KEY = 'AIzaSyAsO9BeU21akr3ABkWUjEJH2rnaNPPz2ng';
-
 // Fichier principal pour gérer les interactions utilisateur
 document.addEventListener('DOMContentLoaded', () => {
   // Éléments du DOM
@@ -90,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (!langChainConfig.isInitialized) {
-      const initialized = await langChainConfig.initialize(FIXED_API_KEY);
+      const initialized = await langChainConfig.initialize();
       if (!initialized) {
         showNotification('Erreur lors de l\'initialisation de l\'IA', 'error');
         return;
