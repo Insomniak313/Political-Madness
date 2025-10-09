@@ -34,7 +34,7 @@ Political-Madness/
 │   ├── main.ts               # Point d'entrée
 │   ├── game-logic.ts         # Logique du jeu
 │   ├── ai-characters.ts      # Personnages IA
-│   ├── langchain-config.ts   # Config API Gemini
+│   ├── langchain-config.ts   # Client front qui appelle l'API backend
 │   ├── styles.css           # Styles
 │   └── vite-env.d.ts        # Types Vite
 ├── dist/                     # Build output
@@ -53,7 +53,7 @@ Political-Madness/
 - Types union pour `Difficulty`, `Theme`, `Position`, `OpponentType`
 
 #### ✅ `src/langchain-config.ts`
-- Typage strict de l'API Google Generative AI
+- Typage strict du client backend
 - Gestion des erreurs typée
 - Import depuis `@google/generative-ai` au lieu de CDN
 
@@ -93,7 +93,7 @@ npm run type-check   # Vérification des types TypeScript
 ## 📦 Dépendances installées
 
 ### Production
-- `@google/generative-ai@^0.21.0` - API Google Gemini
+- `openai@^6` - SDK OpenAI
 
 ### Développement
 - `typescript@^5.3.3` - Compilateur TypeScript

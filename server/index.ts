@@ -12,7 +12,11 @@ app.use(cors({ origin: ALLOWED_ORIGINS, credentials: false }));
 app.use(express.json({ limit: '1mb' }));
 
 app.get('/api/status', (_req, res) => {
-  res.json({ ok: true, model: process.env.GOOGLE_MODEL || 'gemini-2.5-flash-lite' });
+  res.json({
+    ok: true,
+    provider: 'openai',
+    model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+  });
 });
 
 app.use('/api', aiRouter);
