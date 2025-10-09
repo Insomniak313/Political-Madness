@@ -55,7 +55,7 @@ Political-Madness/
 #### ✅ `src/langchain-config.ts`
 - Typage strict du client backend
 - Gestion des erreurs typée
-- Import depuis `@google/generative-ai` au lieu de CDN
+- Utilisation du SDK `openai` côté backend
 
 #### ✅ `src/ai-characters.ts`
 - Classes typées pour les personnages IA
