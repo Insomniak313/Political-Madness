@@ -4,7 +4,8 @@
   "description": "Jeu de débat politique avec IA",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -k -s first -n web,api -c green,cyan \"npm run dev:client\" \"npm run server\"",
+    "dev:client": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
@@ -19,6 +20,7 @@
     "openai": "^6.2.0"
   },
   "devDependencies": {
+    "concurrently": "^9.0.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.0",
